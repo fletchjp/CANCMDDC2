@@ -29,6 +29,8 @@
             "cStandard": "gnu11",
             "cppStandard": "gnu++14",
             "defines": [
+                "ARDUINO=10813",
+                "ARDUINO_AVR_MEGA2560",
                 "USBCON"
             ]
         },

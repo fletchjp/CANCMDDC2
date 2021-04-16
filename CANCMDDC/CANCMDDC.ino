@@ -2300,7 +2300,9 @@ void addSessionConsist(byte session, byte consist)
   removeSessionConsist(session);
 
   // add the consist address to the loco
-  controllers[index].consist = { (consist & 0x7f), 0, ((consist & 0x80) == 0x80) };
+  // remove for now -
+  //invalid narrowing conversion from "int" to "unsigned char"
+  //controllers[index].consist = { (consist & 0x7f), 0, ((consist & 0x80) == 0x80) };
 }
 
 
