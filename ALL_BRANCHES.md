@@ -1,4 +1,4 @@
-# BRANCHES
+# ALL BRANCHES
 
 Documentation of the branches of CANCMDDC2.
 
