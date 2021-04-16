@@ -10,8 +10,8 @@
             "intelliSenseMode": "clang-x64",
             "includePath": [
                 "${workspaceRoot}",
-                "C:\\Users\\User\\Documents\\Arduino\\libraries\\**",
                 "C:\\Users\\User\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**",
+                "C:\\Users\\User\\Documents\\Arduino\\libraries\\**",
                 "E:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
                 "E:\\Program Files (x86)\\Arduino\\libraries\\**",
                 "E:\\Program Files (x86)\\Arduino\\tools\\**",
