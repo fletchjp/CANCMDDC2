@@ -1,3 +1,5 @@
+<img align="right" src="arduino_cbus_logo.png"  width="150" height="75">
+
 # CANCMDDC2
  
 This repository is to hold the version of CANCMDDC which uses the Arduino CBUS library of Duncan Greenwood.
