@@ -14,3 +14,7 @@ version-2.9 22/01/2020 Using IO Absraction Library.
 
 Versions before 2.9 did not properly handle the loco control.
 
+main is for work on CANCMDDC using H bridge controllers
+
+develop is for work on CANCMDDC using the DC controllers
+
