@@ -3,7 +3,7 @@
 
 Documentation of the branches of CANCMDDC2.
 
-This is branch version-2.9
+This is branch main based on version-2.9
 
 This is from CANCMDDC_V2.9 of 22/01/2021
 
