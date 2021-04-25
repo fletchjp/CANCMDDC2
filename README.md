@@ -24,6 +24,10 @@ I am going to bring in the old codes as separate branches.
 
 I will document these in [BRANCHES](BRANCHES.md).
 
+I have made version-2.9 into main as it is the most uptodate of the previous branches. It contains work on task management missing from older code.
+
+version-3.0 is older. It does have some preliminary work on serial connection using RS485. 
+
 ## Problems
 
 I am going to log code problems in [PROBLEMS](PROBLEMS.md).
