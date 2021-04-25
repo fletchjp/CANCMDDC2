@@ -1,7 +1,7 @@
 <img align="right" src="arduino_cbus_logo.png"  width="150" height="75">
 
 # CANCMDDC2
- 
+
 This repository is to hold the version of CANCMDDC which uses the Arduino CBUS library of Duncan Greenwood.
 
 I started work on this in 2019 using as a basis the CANCMDDC code which is in the CANCMDDC-Arduino repository based on MERG-DEV. I have publicised this in the Journal and described it as CANCMDDC2.
@@ -20,7 +20,9 @@ John Fletcher (M6777)
 
 ## Branches
 
-I am going to bring in the old codes as separate branches.
+This is the develop branch for work with the DC Controller.
+
+The old codes are separate branches.
 
 I will document these in [BRANCHES](BRANCHES.md).
 
