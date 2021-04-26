@@ -9,7 +9,6 @@
             ],
             "intelliSenseMode": "clang-x64",
             "includePath": [
-                "${workspaceRoot}",
                 "C:\\Users\\User\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**",
                 "E:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
                 "C:\\Users\\User\\Documents\\Arduino\\libraries\\Streaming\\src",
