@@ -2306,6 +2306,10 @@ void addSessionConsist(byte session, byte consist)
   // remove for now -
   //invalid narrowing conversion from "int" to "unsigned char"
   //controllers[index].consist = { (consist & 0x7f), 0, ((consist & 0x80) == 0x80) };
+  controllers[index].consist.address = (consist & 0x7f);
+  controllers[index].consist.session = 0;
+  controllers[index].consist.reverse = ((consist & 0x80) == 0x80);
+  //This works, although the other version does not with that compiler. Oh well.
 }
 
 
