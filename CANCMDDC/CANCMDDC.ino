@@ -2304,7 +2304,8 @@ void addSessionConsist(byte session, byte consist)
   // add the consist address to the loco
   // remove for now -
   //invalid narrowing conversion from "int" to "unsigned char"
-  byte sevenf = (byte)0x7fu;
+  byte sevenf = 0x7f;
+  byte acon = OPC_ACON;
   byte eightzero = (byte)0x80u;
   controllers[index].consist = { (consist & '\x7f', 0, ((consist & eightzero) == eightzero) )};
 }
