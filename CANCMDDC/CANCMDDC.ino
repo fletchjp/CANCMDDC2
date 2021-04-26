@@ -2293,7 +2293,7 @@ void addSessionConsist(byte session, byte consist)
 #endif
 
   // does the session belong to this controller?
-  byte index = getSessionIndex(session);
+  int index = getSessionIndex(session);
 
   if (index == SF_UNHANDLED)
     return;
@@ -2306,7 +2306,7 @@ void addSessionConsist(byte session, byte consist)
   //invalid narrowing conversion from "int" to "unsigned char"
   //byte sevenf = 0x7f;
   //byte acon = OPC_ACON;
-  byte eightzero = (byte)0x80u;
+  //byte eightzero = (byte)0x80u;
   controllers[index].consist = { (consist & 0x7f, 0, ((consist & 0x80) == 0x80) )};
 }
 
