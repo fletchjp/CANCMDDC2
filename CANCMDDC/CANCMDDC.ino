@@ -2306,7 +2306,7 @@ void addSessionConsist(byte session, byte consist)
   //invalid narrowing conversion from "int" to "unsigned char"
   byte sevenf = (byte)0x7fu;
   byte eightzero = (byte)0x80u;
-  controllers[index].consist = { (consist & sevenf, 0, ((consist & eightzero) == eightzero) };
+  controllers[index].consist = { (consist & sevenf, 0, ((consist & eightzero) == eightzero) )};
 }
 
 void removeSessionConsist(byte session)
