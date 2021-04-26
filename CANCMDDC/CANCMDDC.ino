@@ -2293,7 +2293,7 @@ void addSessionConsist(byte session, byte consist)
 #endif
 
   // does the session belong to this controller?
-  int index = getSessionIndex(session);
+  byte index = getSessionIndex(session);
 
   if (index == SF_UNHANDLED)
     return;

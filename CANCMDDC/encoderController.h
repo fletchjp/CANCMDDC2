@@ -15,7 +15,7 @@
 
 //#define ENCODER_USE_INTERRUPTS
 #define ENCODER_DO_NOT_USE_INTERRUPTS
-#include "Encoder3.h"
+#include "encoder3.h"
 
 class encoderControllerClass
 {
