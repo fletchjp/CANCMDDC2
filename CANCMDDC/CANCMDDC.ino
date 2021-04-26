@@ -2307,7 +2307,12 @@ void addSessionConsist(byte session, byte consist)
   //byte sevenf = 0x7f;
   //byte acon = OPC_ACON;
   //byte eightzero = (byte)0x80u;
-  controllers[index].consist = { (consist & 0x7f, 0, ((consist & 0x80) == 0x80) )};
+  // The error has come back now I have put the bracket back where it was before.
+  // This is making an assignment into a struct.
+  //controllers[index].consist = { (consist & (byte)0x7f), 0, ((consist & 0x80) == 0x80) };
+  controllers[index].consist.address = (consist & 0x7f);
+  controllers[index].consist.session = 0;
+  controllers[index].consist.reverse = ((consist & 0x80) == 0x80);
 }
 
 void removeSessionConsist(byte session)
