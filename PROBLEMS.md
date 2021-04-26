@@ -6,3 +6,6 @@ I have this problem at about line 2300 in AddSessionConsist.
   // remove for now -
   //invalid narrowing conversion from "int" to "unsigned char"
   //controllers[index].consist = { (consist & 0x7f), 0, ((consist & 0x80) == 0x80) };
+
+  For the solution to this and some other problems see the main branch.
+  
