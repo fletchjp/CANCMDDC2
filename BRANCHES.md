@@ -16,7 +16,7 @@ CANCMDDC Version 4a Beta 1
 
 I have added the code to work as a CBUS module without buttons.
 
-This is a version for my old hardware.
+This is a version for my old hardware. This code needs more work to be consistent.
 
 
 https://www.thecoderscorner.com/products/arduino-libraries/io-abstraction/
