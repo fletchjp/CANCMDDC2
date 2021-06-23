@@ -168,7 +168,7 @@
  */
 
 /*
- This is copied from CANCMDDC and needs updating.
+ This is copied from CANCMDDC and needs updating. Yes it does.
  Pin Use map:
  Digital pin 2 (PWM)    PWM0  H1a
  Digital pin 3 (PWM)    PWM1  H1b
@@ -354,7 +354,7 @@ CBUSBUZZER moduleBuzzer;             // an example Buzzer as output
 unsigned char params[21];
 
 // module name
-unsigned char mname[7] = { 'C', 'M', 'D', 'D', 'C', ' ', '2'};
+unsigned char mname[7] = { 'C', 'M', 'D', 'D', 'C', ' ', ' '};
 
 // Set GROVE 1 for a GROVE switch which is HIGH when pressed, otherwise 0
 #define GROVE 1
