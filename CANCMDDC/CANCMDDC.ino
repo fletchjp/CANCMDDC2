@@ -2,6 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // I am going to make this 4.0 for now as 3 is taken.
+// Version 4a Beta 1
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -737,9 +738,9 @@ volatile boolean       showingSpeeds     = false;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // constants
-const byte VER_MAJ = 2;                  // code major version
+const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 9;                 // code beta sub-version
+const byte VER_BETA = 1;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
