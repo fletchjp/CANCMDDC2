@@ -169,6 +169,7 @@
 
 /*
  This is copied from CANCMDDC and needs updating. Yes it does.
+ This is particularly the case as it will be different for different hardware options.
  Pin Use map:
  Digital pin 2 (PWM)    PWM0  H1a
  Digital pin 3 (PWM)    PWM1  H1b
@@ -292,6 +293,7 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 #endif
 #include <CBUSconfig.h>             // module configuration
 #include <cbusdefs.h>               // MERG CBUS constants
+#include <CBUSParams.h>
 
 // CANCMDDC
 #include <PWM.h>     // Library for controlling PWM Frequency
@@ -337,11 +339,6 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 #define ON      1
 #define OFF     0
 
-// CBUS objects
-CBUS2515 CBUS;                      // CBUS object
-CBUSConfig config;                  // configuration object
-CBUSLED ledGrn, ledYlw;             // LED objects
-CBUSSwitch pb_switch;               // switch object
 
 // module objects
 CBUSSwitch moduleSwitch;            // an example switch as input
@@ -850,6 +847,67 @@ byte ledOn;
 //
 int taskId = TASKMGR_INVALIDID; // Set to this value so that it won't get cancelled before it exists!
 
+// CBUS objects
+CBUS2515 CBUS;                      // CBUS object
+CBUSConfig config;                  // configuration object
+CBUSLED ledGrn, ledYlw;             // LED objects
+CBUSSwitch pb_switch;               // switch object
+
+//
+///  setup CBUS - runs once at power on called from setup()
+//
+void setupCBUS()
+{
+  // set config layout parameters
+  config.EE_NVS_START = 10;
+  config.EE_NUM_NVS = 10;
+  config.EE_EVENTS_START = 50;
+  config.EE_MAX_EVENTS = 64;
+  config.EE_NUM_EVS = 1;
+  config.EE_BYTES_PER_EVENT = (config.EE_NUM_EVS + 4);
+
+  // initialise and load configuration
+  config.setEEPROMtype(EEPROM_INTERNAL);
+  config.begin();
+
+  Serial << F("> mode = ") << ((config.FLiM) ? "FLiM" : "SLiM") << F(", CANID = ") << config.CANID;
+  Serial << F(", NN = ") << config.nodeNum << endl;
+
+  // show code version and copyright notice
+  printConfig();
+
+  // set module parameters
+  CBUSParams params(config);
+  params.setVersion(VER_MAJ, VER_MIN, VER_BETA);
+  params.setModuleId(MODULE_ID);
+  params.setFlags(PF_FLiM | PF_COMBI);
+
+  // assign to CBUS
+  CBUS.setParams(params.getParams());
+  CBUS.setName(mname);
+
+  // register our CBUS event handler, to receive event messages of learned events
+  CBUS.setEventHandler(eventhandler);
+  CBUS.setFrameHandler(framehandler, opcodes, nopcodes);
+
+  // set LED and switch pins and assign to CBUS
+  ledGrn.setPin(LED_GRN);
+  ledYlw.setPin(LED_YLW);
+  CBUS.setLEDs(ledGrn, ledYlw);
+  CBUS.setSwitch(pb_switch);
+
+  // set CBUS LEDs to indicate mode
+  CBUS.indicateMode(config.FLiM);
+
+  // configure and start CAN bus and CBUS message processing
+  CBUS.setNumBuffers(4);         // more buffers = more memory used, fewer = less
+#if CANBUS8MHZ
+  CBUS.setOscFreq(CAN_OSC_FREQ);   // select the crystal frequency of the CAN module
+  //CBUS.setOscFreq(8000000UL);   // MCP2515 CANBUS 8Mhz 
+#endif
+  CBUS.setPins(CHIPSELECT,CBUSINTPIN); // Values of the pins for a MEGA
+  CBUS.begin();
+}
 
 /***************************************************************************************************
  * Arduino setup routine
@@ -864,52 +922,12 @@ int taskId = TASKMGR_INVALIDID; // Set to this value so that it won't get cancel
   Serial << endl << endl << F("> ** CBUS CMDDCC2 module v2.2h ** ") << __FILE__ << endl;
 //#endif
 
-  // set config layout parameters
-  config.EE_NVS_START = 10;
-  config.EE_NUM_NVS = 10;
-  config.EE_EVENTS_START = 50;
-  config.EE_MAX_EVENTS = 64;
-  config.EE_NUM_EVS = 1;
-  config.EE_BYTES_PER_EVENT = (config.EE_NUM_EVS + 4);
-
-  // initialise and load configuration
-  config.setEEPROMtype(EEPROM_INTERNAL);
-  config.begin();
+  setupCBUS();
 
 #if DEBUG
   Serial << F("> mode = ") << ((config.FLiM) ? "FLiM" : "SLiM") << F(", CANID = ") << config.CANID;
   Serial << F(", NN = ") << config.nodeNum << endl;
-
-  // show code version and copyright notice
-  printConfig();
 #endif
-
-  // set module parameters
-  params[0] = 20;                     //  0 num params = 10
-  params[1] = 0xa5;                   //  1 manf = MERG, 165
-  params[2] = VER_MIN;                //  2 code minor version
-  params[3] = MODULE_ID;              //  3 module id, 99 = undefined
-  params[4] = config.EE_MAX_EVENTS;   //  4 num events
-  params[5] = config.EE_NUM_EVS;      //  5 num evs per event
-  params[6] = config.EE_NUM_NVS;      //  6 num NVs
-  params[7] = VER_MAJ;                //  7 code major version
-  params[8] = 0x07;                   //  8 flags = 7, FLiM, consumer/producer
-  params[9] = 0x32;                   //  9 processor id = 50
-  params[10] = PB_CAN;                // 10 interface protocol = CAN, 1
-  params[11] = 0x00;
-  params[12] = 0x00;
-  params[13] = 0x00;
-  params[14] = 0x00;
-  params[15] = '3';
-  params[16] = '2';
-  params[17] = '8';
-  params[18] = 'P';
-  params[19] = CPUM_ATMEL;
-  params[20] = VER_BETA;
-
-  // assign to CBUS
-  CBUS.setParams(params);
-  CBUS.setName(mname);
 
 #if OLED_DISPLAY || LCD_DISPLAY
   initialiseDisplay();
@@ -968,27 +986,7 @@ int taskId = TASKMGR_INVALIDID; // Set to this value so that it won't get cancel
     config.resetModule(ledGrn, ledYlw, pb_switch);
   }
 
-  // register our CBUS event handler, to receive event messages of learned events
-  CBUS.setEventHandler(eventhandler);
 
-  CBUS.setFrameHandler(framehandler, opcodes, nopcodes);
-
-  // set LED and switch pins and assign to CBUS
-  ledGrn.setPin(LED_GRN);
-  ledYlw.setPin(LED_YLW);
-  CBUS.setLEDs(ledGrn, ledYlw);
-  CBUS.setSwitch(pb_switch);
-
-  // set CBUS LEDs to indicate mode
-  CBUS.indicateMode(config.FLiM);
-
-  // configure and start CAN bus and CBUS message processing
-  CBUS.setNumBuffers(4);
-#if CANBUS8MHZ
-  CBUS.setOscFreq(8000000UL);   // MCP2515 CANBUS 8Mhz 
-#endif
-  CBUS.setPins(CHIPSELECT,CBUSINTPIN);
-  CBUS.begin();
 
 #if GROVE
 //  moduleSwitch.setPin(SWITCH, HIGH);
