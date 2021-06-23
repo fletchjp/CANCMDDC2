@@ -3,6 +3,8 @@
 // CANCMDDC develop branch to work with the DC Controler.
 // I am going to make this 4.0 for now as 3 is taken.
 // Version 4a Beta 1
+// Add code for r and z in processSerialInput.
+// This means it will change from SLiM to FLiM without the button.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
