@@ -1,10 +1,12 @@
-   #define VERSION 4.0
+   #define VERSION 4.2
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // I am going to make this 4.0 for now as 3 is taken.
 // Version 4a Beta 1
 // Add code for r and z in processSerialInput.
 // This means it will change from SLiM to FLiM without the button.
+// Version 4a Beta 2
+// Change to use setupCBUS routine following CANmINnOUT
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -739,7 +741,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 1;                 // code beta sub-version
+const byte VER_BETA = 2;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
