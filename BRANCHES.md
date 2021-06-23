@@ -12,6 +12,13 @@ This originates from CANCMDDC_V2.9 of 22/01/2021
 CANCMDDC_V2a Beta 9
 Ideas for using IO Abstraction library for task scheduling.
 
+CANCMDDC Version 4a Beta 1
+
+I have added the code to work as a CBUS module without buttons.
+
+This is a version for my old hardware.
+
+
 https://www.thecoderscorner.com/products/arduino-libraries/io-abstraction/
 
 The only other example working is CANTEXT2
