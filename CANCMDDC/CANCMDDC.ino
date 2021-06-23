@@ -259,7 +259,7 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 
 // Set this to 1 for CANBUS modules with 8 Mhz Crystal
 // Set this to 0 for Sparkfun CANBUS shields.
-#define CANBUS8MHZ 1
+#define CANBUS8MHZ 0
 
 // CANCMDDC 1.10 added extra display/keypad options plus CANBUS
 #define DEBUG         1 // set to 0 for no debug messages, 1 for messages to console
