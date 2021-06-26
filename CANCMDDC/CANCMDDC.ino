@@ -1341,7 +1341,6 @@ void eventhandler(byte index, CANFrame *msg) {
  *  code for the time being
  *  
  */
-//#if USE_CODE_SWITCH 
     byte op_code = msg->data[0];
     unsigned int node_number = (msg->data[1] << 8 ) + msg->data[2];
     // This is not true in all cases.
@@ -1429,9 +1428,6 @@ void eventhandler(byte index, CANFrame *msg) {
          Serial << F("Event ignored with Opcode [ 0x") << _HEX(op_code) << F(" ]")<< endl;
 #endif
     }
-//#else // USE_CODE_SWITCH
-// Whole section removed.
-//#endif // USE_CODE_SWITCH
 
   return;
 }
