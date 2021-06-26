@@ -266,7 +266,7 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 
 // Set this to 1 for CANBUS modules with 8 Mhz Crystal
 // Set this to 0 for Sparkfun CANBUS shields.
-#define CANBUS8MHZ 0
+#define CANBUS8MHZ 1
 
 // CANCMDDC 1.10 added extra display/keypad options plus CANBUS
 #define DEBUG         1 // set to 0 for no debug messages, 1 for messages to console
@@ -909,8 +909,8 @@ void setupCBUS()
   // configure and start CAN bus and CBUS message processing
   CBUS.setNumBuffers(4);         // more buffers = more memory used, fewer = less
 #if CANBUS8MHZ
-  CBUS.setOscFreq(CAN_OSC_FREQ);   // select the crystal frequency of the CAN module
-  //CBUS.setOscFreq(8000000UL);   // MCP2515 CANBUS 8Mhz 
+  //CBUS.setOscFreq(CAN_OSC_FREQ);   // select the crystal frequency of the CAN module
+  CBUS.setOscFreq(8000000UL);   // MCP2515 CANBUS 8Mhz 
 #endif
   CBUS.setPins(CHIPSELECT,CBUSINTPIN); // Values of the pins for a MEGA
   CBUS.begin();
