@@ -7,6 +7,7 @@
 // This means it will change from SLiM to FLiM without the button.
 // Version 4a Beta 2
 // Change to use setupCBUS routine following CANmINnOUT
+// Note: There is no way at the moment to cancel the overload buzzer.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
