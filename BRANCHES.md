@@ -30,3 +30,8 @@ CANCMDDC Version 4a Beta 2
 I have made more changes to use the setupCBUS routine as in CANmINnOUT. This needs to be tested.
 
 This code works with H bridges.
+
+I have tested this code on the old hardware and some of it works. I cannot get it to register with FCU at the moment. Some things are incomplete.
+
+The version running on the hardware before was 2.5.
+
