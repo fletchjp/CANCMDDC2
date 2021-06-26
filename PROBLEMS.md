@@ -18,3 +18,5 @@ The hardware will run the old CANCMDDC 2.5 code and I can link that to the CBUS 
 When I recompile the new code it at first recognises the old configuration. It then reverts to SLiM on its own and floods the CBUS with messages as seen on CANACT. These show up as transmission errors.
 
 I have checked versions of libraries and updated the Arduino version.
+
+It turns out that I had an incorrect setting for the CAN crystal frequency. It now works.
