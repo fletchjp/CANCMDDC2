@@ -33,5 +33,7 @@ This code works with H bridges.
 
 I have tested this code on the old hardware and some of it works. I cannot get it to register with FCU at the moment. Some things are incomplete.
 
-The version running on the hardware before was 2.5.
+The version running on the hardware before was 2.5. This is strange as it is from before the versions I brought on here, of which the earliest is 2.6. I have a copy.
+
+The version I have on the laptop lacks the code to process responses to query events. (AROF/ARON/ARSON/ARSOF) These are not in use at the moment.
 
