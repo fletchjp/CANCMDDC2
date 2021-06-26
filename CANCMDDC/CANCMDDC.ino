@@ -8,6 +8,9 @@
 // Version 4a Beta 2
 // Change to use setupCBUS routine following CANmINnOUT
 // Note: There is no way at the moment to cancel the overload buzzer.
+// Tested this version and some things worked but not SLiM/FLiM transfer.
+// Version 4a Beta 3
+// Changes to attempt to fix bugs. Call to <Arduino.h>
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -743,7 +746,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 2;                 // code beta sub-version
+const byte VER_BETA = 3;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
