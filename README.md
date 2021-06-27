@@ -2,31 +2,37 @@
 
 # CANCMDDC2
 
-This repository is to hold the version of CANCMDDC which uses the Arduino CBUS library of Duncan Greenwood.
+This repository is to hold a version of CANCMDDC which uses the Arduino CBUS library of Duncan Greenwood. This means that it can exchange CBUS events with other modules. These events need to be coded by the user.
 
-I started work on this in 2019 using as a basis the CANCMDDC code which is in the CANCMDDC-Arduino repository based on MERG-DEV. I have publicised this in the Journal and described it as CANCMDDC2.
+I started work on this code in 2019 using as a basis the CANCMDDC code which is in the CANCMDDC-Arduino repository based on MERG-DEV. I wrote an article in the MERG Journal and described it as CANCMDDC2. I did not at that stage release any code.
 
-I am going to use the name CANCMDDC for the actual code here as that is what it is going to be called in FCU as the original CANCMDDC does not work with CBUS events.
+I am going to use the name CANCMDDC for the code here as that is what it is going to be called in FCU as the original CANCMDDC does not work with CBUS events.
 
-The problem which I have starting this work now is that I already have a lot of versions of the code which I have worked with and shared.
+The code now contains a number of significant developments from the version I was using for tests in early 2020. The most important of these is that I have introduced task management to control the actions of different parts of the code.
+
+John Fletcher (M6777)
+
+## Previous work
+
+The problem which I had in restarting this work is that I already had a lot of versions of the code which I have worked with and shared. At that time I was not using GitHub and so the various versions which were shared were not coordinated. Various problems arose and modified versions were also shared.
 
 There have been several stages where problems have been located and there are also options which I still want to add. My current aim is to have a main branch which is designed to be usable for others, with other branches which incorporate new options.
 
 One thing to bear in mind is that at the beginning of 2020 I was attempting to make the code as flexible as possible to allow for different hardware options. I was unable to test anything other than my own hardware before the lockdown in March 2020 made meetings impossible.
 
-I think that now I will attempt to cover options in a different way with code branches in GitHub.
-
-John Fletcher (M6777)
+I have now made GitHub branches which cover the old codes. New versions will also be in code branches in GitHub.
 
 ## Main Branch
 
 This is the place to look for a working version of CANCMDDC.
 
+I need to provide documentation for it.
+
 ## Other Branches
 
 The old codes are separate branches.
 
-I will document these in [BRANCHES](BRANCHES.md).
+I have documented these in [BRANCHES](BRANCHES.md).
 
 I have made version-2.9 into old-main as it is the most uptodate of the previous branches. It contains work on task management missing from older code. This will be the version used with H bridge drivers.
 
