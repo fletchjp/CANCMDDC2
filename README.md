@@ -38,3 +38,21 @@ I am going to make a new branch for the work with the DC controller. It is not t
 
 I am going to log code problems in [PROBLEMS](PROBLEMS.md).
 
+## Installation and use
+
+I need to put together some instructions for use of this code.
+
+It is designed to be used on a range of different hardware and I will need to explain that.
+
+It requires the installation of a number of Arduino libraries and I need to explain that.
+
+## Design
+
+CANCMDDC follows the design of the earlier versions built by Dave Radcliffe and others. The purpose is to drive a number of DC powered track sections using CANCAB or JMRI cabs in the same way as can be done for DCC. The sections are numbered in a series and controlled in the same way that a loco would be in DCC. These numbers are allocated in a series e.g 1001, 1002 which can be chosen as part of the configuration.
+
+The output for each section is a pair of wires to power the setion. This could be subject to switching using relays external to the CANCMDDC which has no provision for switching.
+
+The difference between this CANCMDDC and earlier versions is that it can also send and receive CBUS events, separately from the control messages from the CABS. These can be configured as needed by the user. Some examples are provided.
+
+The program runs on an Arduino MEGA.
+
