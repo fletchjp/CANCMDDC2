@@ -20,7 +20,7 @@ John Fletcher (M6777)
 
 ## Branches
 
-This is the develop branch for work with the DC Controller.
+This is the develop branch for work with the DC Controller. That was my intention. I have in fact used this to develop the current version. I am now going to merge this back into main and start a new branch for the DC Controller version.
 
 The old codes are separate branches.
 
