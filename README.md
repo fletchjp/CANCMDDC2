@@ -16,7 +16,9 @@ John Fletcher (M6777)
 
 The problem which I had in restarting this work is that I already had a lot of versions of the code which I have worked with and shared. At that time I was not using GitHub and so the various versions which were shared were not coordinated. Various problems arose and modified versions were also shared.
 
-There have been several stages where problems have been located and there are also options which I still want to add. My current aim is to have a main branch which is designed to be usable for others, with other branches which incorporate new options.
+I have gathered here a number of the versions which already existed. There are also options which I still want to add. These are in various branches which may change from time to time
+
+It is the main branch which is designed to be usable for others, with other branches which incorporate new options. The main branch code will include options for different hardware and I have started to develop documentation for it.
 
 One thing to bear in mind is that at the beginning of 2020 I was attempting to make the code as flexible as possible to allow for different hardware options. I was unable to test anything other than my own hardware before the lockdown in March 2020 made meetings impossible.
 
