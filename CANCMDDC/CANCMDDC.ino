@@ -1,5 +1,7 @@
    #define VERSION 2.9
-//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+// CANCMDDC Main Branch retaining H Bridge control.
+////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
 //
@@ -9,7 +11,7 @@
 // I will also use Martin Da Costa's modifications e.g. no defs.h file.
 // First version put together for testing.
 // At the moment I have no way to turn off the buzzer if a power alarm happens.
-//////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 8
 // Adding the KEYPAD and ENCODER code
 // I have missed out 2.7 as I think someone is already using it.
@@ -2291,7 +2293,7 @@ void addSessionConsist(byte session, byte consist)
 #endif
 
   // does the session belong to this controller?
-  int index = getSessionIndex(session);
+  byte index = getSessionIndex(session);
 
   if (index == SF_UNHANDLED)
     return;
@@ -2300,9 +2302,18 @@ void addSessionConsist(byte session, byte consist)
   removeSessionConsist(session);
 
   // add the consist address to the loco
-  controllers[index].consist = { (consist & 0x7f), 0, ((consist & 0x80) == 0x80) };
+  // remove for now -
+  //invalid narrowing conversion from "int" to "unsigned char"
+  //byte sevenf = 0x7f;
+  //byte acon = OPC_ACON;
+  //byte eightzero = (byte)0x80u;
+  // The error has come back now I have put the bracket back where it was before.
+  // This is making an assignment into a struct.
+  //controllers[index].consist = { (consist & (byte)0x7f), 0, ((consist & 0x80) == 0x80) };
+  controllers[index].consist.address = (consist & 0x7f);
+  controllers[index].consist.session = 0;
+  controllers[index].consist.reverse = ((consist & 0x80) == 0x80);
 }
-
 
 void removeSessionConsist(byte session)
 {
