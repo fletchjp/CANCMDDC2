@@ -23,3 +23,16 @@ I have had quite a lot of problems with the system reporting definitions it cann
 
 It turns out that there are two versions of this file. At some point a version was created which works with encoders using three pins. That is the one needed for this code so I have added it with the name encoder3.h.
 
+  
+# Problem running this code
+
+I am running the code on my old hardware.
+
+The hardware will run the old CANCMDDC 2.5 code and I can link that to the CBUS network and see it working as a FLiM node.
+
+When I recompile the new code it at first recognises the old configuration. It then reverts to SLiM on its own and floods the CBUS with messages as seen on CANACT. These show up as transmission errors.
+
+I have checked versions of libraries and updated the Arduino version.
+
+It turns out that I had an incorrect setting for the CAN crystal frequency. It now works.
+

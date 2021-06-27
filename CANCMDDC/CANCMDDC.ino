@@ -1,7 +1,19 @@
-   #define VERSION 2.9
-////////////////////////////////////////////////////////////////////////////
-// CANCMDDC Main Branch retaining H Bridge control.
-////////////////////////////////////////////////////////////////////////////
+
+   #define VERSION 4.2
+//////////////////////////////////////////////////////////////////////////////
+// CANCMDDC develop branch to work with the DC Controler.
+// I am going to make this 4.0 for now as 3 is taken.
+// Version 4a Beta 1
+// Add code for r and z in processSerialInput.
+// This means it will change from SLiM to FLiM without the button.
+// Version 4a Beta 2
+// Change to use setupCBUS routine following CANmINnOUT
+// Note: There is no way at the moment to cancel the overload buzzer.
+// Tested this version and some things worked but not SLiM/FLiM transfer.
+// Version 4a Beta 3
+// Changes to attempt to fix bugs. Call to <Arduino.h>
+// Version Updated to 4b Beta 1 as it now works.
+//////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
 //
@@ -11,7 +23,7 @@
 // I will also use Martin Da Costa's modifications e.g. no defs.h file.
 // First version put together for testing.
 // At the moment I have no way to turn off the buzzer if a power alarm happens.
-///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 8
 // Adding the KEYPAD and ENCODER code
 // I have missed out 2.7 as I think someone is already using it.
@@ -164,7 +176,8 @@
  */
 
 /*
- This is copied from CANCMDDC and needs updating.
+ This is copied from CANCMDDC and needs updating. Yes it does.
+ This is particularly the case as it will be different for different hardware options.
  Pin Use map:
  Digital pin 2 (PWM)    PWM0  H1a
  Digital pin 3 (PWM)    PWM1  H1b
@@ -288,14 +301,16 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 #endif
 #include <CBUSconfig.h>             // module configuration
 #include <cbusdefs.h>               // MERG CBUS constants
+#include <CBUSParams.h>
 
 // CANCMDDC
 #include <PWM.h>     // Library for controlling PWM Frequency
 // This may need to become something which depends on LINKSPRITE.
 #include "trainController.h"
 
+#include <Arduino.h> // This was in defs.h. I am not sure if it is needed.
 // local header which is going to have to be adapted for pin numbers.
-//#include "defs.h"
+//#include "defs.h" now brought on board.
 
 #if LCD_DISPLAY || OLED_DISPLAY 
 #include <Wire.h>    // Library for I2C comminications for display
@@ -333,11 +348,6 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 #define ON      1
 #define OFF     0
 
-// CBUS objects
-CBUS2515 CBUS;                      // CBUS object
-CBUSConfig config;                  // configuration object
-CBUSLED ledGrn, ledYlw;             // LED objects
-CBUSSwitch pb_switch;               // switch object
 
 // module objects
 CBUSSwitch moduleSwitch;            // an example switch as input
@@ -350,7 +360,7 @@ CBUSBUZZER moduleBuzzer;             // an example Buzzer as output
 unsigned char params[21];
 
 // module name
-unsigned char mname[7] = { 'C', 'M', 'D', 'D', 'C', ' ', '2'};
+unsigned char mname[7] = { 'C', 'M', 'D', 'D', 'C', ' ', ' '};
 
 // Set GROVE 1 for a GROVE switch which is HIGH when pressed, otherwise 0
 #define GROVE 1
@@ -736,9 +746,9 @@ volatile boolean       showingSpeeds     = false;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // constants
-const byte VER_MAJ = 2;                  // code major version
-const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 9;                 // code beta sub-version
+const byte VER_MAJ = 4;                  // code major version
+const char VER_MIN = 'b';                // code minor version
+const byte VER_BETA = 1;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
@@ -846,6 +856,67 @@ byte ledOn;
 //
 int taskId = TASKMGR_INVALIDID; // Set to this value so that it won't get cancelled before it exists!
 
+// CBUS objects
+CBUS2515 CBUS;                      // CBUS object
+CBUSConfig config;                  // configuration object
+CBUSLED ledGrn, ledYlw;             // LED objects
+CBUSSwitch pb_switch;               // switch object
+
+//
+///  setup CBUS - runs once at power on called from setup()
+//
+void setupCBUS()
+{
+  // set config layout parameters
+  config.EE_NVS_START = 10;
+  config.EE_NUM_NVS = 10;
+  config.EE_EVENTS_START = 50;
+  config.EE_MAX_EVENTS = 64;
+  config.EE_NUM_EVS = 1;
+  config.EE_BYTES_PER_EVENT = (config.EE_NUM_EVS + 4);
+
+  // initialise and load configuration
+  config.setEEPROMtype(EEPROM_INTERNAL);
+  config.begin();
+
+  Serial << F("> mode = ") << ((config.FLiM) ? "FLiM" : "SLiM") << F(", CANID = ") << config.CANID;
+  Serial << F(", NN = ") << config.nodeNum << endl;
+
+  // show code version and copyright notice
+  printConfig();
+
+  // set module parameters
+  CBUSParams params(config);
+  params.setVersion(VER_MAJ, VER_MIN, VER_BETA);
+  params.setModuleId(MODULE_ID);
+  params.setFlags(PF_FLiM | PF_COMBI);
+
+  // assign to CBUS
+  CBUS.setParams(params.getParams());
+  CBUS.setName(mname);
+
+  // register our CBUS event handler, to receive event messages of learned events
+  CBUS.setEventHandler(eventhandler);
+  CBUS.setFrameHandler(framehandler, opcodes, nopcodes);
+
+  // set LED and switch pins and assign to CBUS
+  ledGrn.setPin(LED_GRN);
+  ledYlw.setPin(LED_YLW);
+  CBUS.setLEDs(ledGrn, ledYlw);
+  CBUS.setSwitch(pb_switch);
+
+  // set CBUS LEDs to indicate mode
+  CBUS.indicateMode(config.FLiM);
+
+  // configure and start CAN bus and CBUS message processing
+  CBUS.setNumBuffers(4);         // more buffers = more memory used, fewer = less
+#if CANBUS8MHZ
+  //CBUS.setOscFreq(CAN_OSC_FREQ);   // select the crystal frequency of the CAN module
+  CBUS.setOscFreq(8000000UL);   // MCP2515 CANBUS 8Mhz 
+#endif
+  CBUS.setPins(CHIPSELECT,CBUSINTPIN); // Values of the pins for a MEGA
+  CBUS.begin();
+}
 
 /***************************************************************************************************
  * Arduino setup routine
@@ -860,52 +931,12 @@ int taskId = TASKMGR_INVALIDID; // Set to this value so that it won't get cancel
   Serial << endl << endl << F("> ** CBUS CMDDCC2 module v2.2h ** ") << __FILE__ << endl;
 //#endif
 
-  // set config layout parameters
-  config.EE_NVS_START = 10;
-  config.EE_NUM_NVS = 10;
-  config.EE_EVENTS_START = 50;
-  config.EE_MAX_EVENTS = 64;
-  config.EE_NUM_EVS = 1;
-  config.EE_BYTES_PER_EVENT = (config.EE_NUM_EVS + 4);
-
-  // initialise and load configuration
-  config.setEEPROMtype(EEPROM_INTERNAL);
-  config.begin();
+  setupCBUS();
 
 #if DEBUG
   Serial << F("> mode = ") << ((config.FLiM) ? "FLiM" : "SLiM") << F(", CANID = ") << config.CANID;
   Serial << F(", NN = ") << config.nodeNum << endl;
-
-  // show code version and copyright notice
-  printConfig();
 #endif
-
-  // set module parameters
-  params[0] = 20;                     //  0 num params = 10
-  params[1] = 0xa5;                   //  1 manf = MERG, 165
-  params[2] = VER_MIN;                //  2 code minor version
-  params[3] = MODULE_ID;              //  3 module id, 99 = undefined
-  params[4] = config.EE_MAX_EVENTS;   //  4 num events
-  params[5] = config.EE_NUM_EVS;      //  5 num evs per event
-  params[6] = config.EE_NUM_NVS;      //  6 num NVs
-  params[7] = VER_MAJ;                //  7 code major version
-  params[8] = 0x07;                   //  8 flags = 7, FLiM, consumer/producer
-  params[9] = 0x32;                   //  9 processor id = 50
-  params[10] = PB_CAN;                // 10 interface protocol = CAN, 1
-  params[11] = 0x00;
-  params[12] = 0x00;
-  params[13] = 0x00;
-  params[14] = 0x00;
-  params[15] = '3';
-  params[16] = '2';
-  params[17] = '8';
-  params[18] = 'P';
-  params[19] = CPUM_ATMEL;
-  params[20] = VER_BETA;
-
-  // assign to CBUS
-  CBUS.setParams(params);
-  CBUS.setName(mname);
 
 #if OLED_DISPLAY || LCD_DISPLAY
   initialiseDisplay();
@@ -964,27 +995,7 @@ int taskId = TASKMGR_INVALIDID; // Set to this value so that it won't get cancel
     config.resetModule(ledGrn, ledYlw, pb_switch);
   }
 
-  // register our CBUS event handler, to receive event messages of learned events
-  CBUS.setEventHandler(eventhandler);
 
-  CBUS.setFrameHandler(framehandler, opcodes, nopcodes);
-
-  // set LED and switch pins and assign to CBUS
-  ledGrn.setPin(LED_GRN);
-  ledYlw.setPin(LED_YLW);
-  CBUS.setLEDs(ledGrn, ledYlw);
-  CBUS.setSwitch(pb_switch);
-
-  // set CBUS LEDs to indicate mode
-  CBUS.indicateMode(config.FLiM);
-
-  // configure and start CAN bus and CBUS message processing
-  CBUS.setNumBuffers(4);
-#if CANBUS8MHZ
-  CBUS.setOscFreq(8000000UL);   // MCP2515 CANBUS 8Mhz 
-#endif
-  CBUS.setPins(CHIPSELECT,CBUSINTPIN);
-  CBUS.begin();
 
 #if GROVE
 //  moduleSwitch.setPin(SWITCH, HIGH);
@@ -1332,7 +1343,6 @@ void eventhandler(byte index, CANFrame *msg) {
  *  code for the time being
  *  
  */
-//#if USE_CODE_SWITCH 
     byte op_code = msg->data[0];
     unsigned int node_number = (msg->data[1] << 8 ) + msg->data[2];
     // This is not true in all cases.
@@ -1420,9 +1430,6 @@ void eventhandler(byte index, CANFrame *msg) {
          Serial << F("Event ignored with Opcode [ 0x") << _HEX(op_code) << F(" ]")<< endl;
 #endif
     }
-//#else // USE_CODE_SWITCH
-// Whole section removed.
-//#endif // USE_CODE_SWITCH
 
   return;
 }
@@ -2304,15 +2311,11 @@ void addSessionConsist(byte session, byte consist)
   // add the consist address to the loco
   // remove for now -
   //invalid narrowing conversion from "int" to "unsigned char"
-  //byte sevenf = 0x7f;
-  //byte acon = OPC_ACON;
-  //byte eightzero = (byte)0x80u;
-  // The error has come back now I have put the bracket back where it was before.
-  // This is making an assignment into a struct.
-  //controllers[index].consist = { (consist & (byte)0x7f), 0, ((consist & 0x80) == 0x80) };
+  //controllers[index].consist = { (consist & 0x7f), 0, ((consist & 0x80) == 0x80) };
   controllers[index].consist.address = (consist & 0x7f);
   controllers[index].consist.session = 0;
   controllers[index].consist.reverse = ((consist & 0x80) == 0x80);
+  //This works, although the other version does not with that compiler. Oh well.>>>>>>> 9889f22519fb9a2ede20893fbdcefad8d2ff6b54
 }
 
 void removeSessionConsist(byte session)
@@ -3503,6 +3506,37 @@ void processSerialInput(void) {
       case 'm':
         // free memory
         Serial << F("> free SRAM = ") << config.freeSRAM() << F(" bytes") << endl;
+        break;
+
+      case 'r':
+        // renegotiate
+        CBUS.renegotiate();
+        break;
+
+      case 'z':
+        // Reset module, clear EEPROM
+        static bool ResetRq = false;
+        static unsigned long ResWaitTime;
+        if (!ResetRq) {
+          // start timeout timer
+          Serial << F(">Reset & EEPROM wipe requested. Press 'z' again within 2 secs to confirm") << endl;
+          ResWaitTime = millis();
+          ResetRq = true;
+        }
+        else {
+          // This is a confirmed request
+          // 2 sec timeout
+          if (ResetRq && ((millis() - ResWaitTime) > 2000)) {
+            Serial << F(">timeout expired, reset not performed") << endl;
+            ResetRq = false;
+          }
+          else {
+            //Request confirmed within timeout
+            Serial << F(">RESETTING AND WIPING EEPROM") << endl;
+            config.resetModule();
+            ResetRq = false;
+          }
+        }
         break;
 
       case '\r':
