@@ -54,6 +54,8 @@ It is designed to be used on a range of different hardware and I will need to ex
 
 It requires the installation of a number of Arduino libraries and I need to explain that.
 
+Users will need to decide what events to build into the code. There is a need for a document to describe that.
+
 ## Design
 
 CANCMDDC follows the design of the earlier versions built by Dave Radcliffe and others. The purpose is to drive a number of DC powered track sections using CANCAB or JMRI cabs in the same way as can be done for DCC. The sections are numbered in a series and controlled in the same way that a loco would be in DCC. These numbers are allocated in a series e.g 1001, 1002 which can be chosen as part of the configuration.
@@ -62,5 +64,5 @@ The output for each section is a pair of wires to power the setion. This could b
 
 The difference between this CANCMDDC and earlier versions is that it can also send and receive CBUS events, separately from the control messages from the CABS. These can be configured as needed by the user. Some examples are provided.
 
-The program runs on an Arduino MEGA.
+The program runs on an Arduino MEGA. A UNO does not have enough memory or IO pins.
 
