@@ -18,19 +18,21 @@ I think that now I will attempt to cover options in a different way with code br
 
 John Fletcher (M6777)
 
-## Branches
+## Main Branch
 
-This is the develop branch for work with the DC Controller. That was my intention. I have in fact used this to develop the current version. I am now going to merge this back into main and start a new branch for the DC Controller version.
+This is the place to look for a working version of CANCMDDC.
+
+## Other Branches
 
 The old codes are separate branches.
 
 I will document these in [BRANCHES](BRANCHES.md).
 
-I have made version-2.9 into main as it is the most uptodate of the previous branches. It contains work on task management missing from older code. This will be the version used with H bridge drivers.
+I have made version-2.9 into old-main as it is the most uptodate of the previous branches. It contains work on task management missing from older code. This will be the version used with H bridge drivers.
 
 version-3.0 is older. It does have some preliminary work on serial connection using RS485.
 
-I am going to make a new develop branch for the work with the DC controller.
+I am going to make a new branch for the work with the DC controller. It is not there at present. The previous develop branch has been merged into main.
 
 ## Problems
 
