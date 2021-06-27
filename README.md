@@ -2,7 +2,7 @@
 
 # CANCMDDC2
 
-This repository is to hold a version of CANCMDDC which uses the Arduino CBUS library of Duncan Greenwood. This means that it can exchange CBUS events with other modules. These events need to be coded by the user.
+This repository holds a version of CANCMDDC which uses the Arduino CBUS library of Duncan Greenwood. This means that it can exchange CBUS events with other modules. These events need to be coded by the user.
 
 I started work on this code in 2019 using as a basis the CANCMDDC code which is in the CANCMDDC-Arduino repository based on MERG-DEV. I wrote an article in the MERG Journal and described it as CANCMDDC2. I did not at that stage release any code.
 
