@@ -15,7 +15,8 @@
 // Version Updated to 4b Beta 3 as it now works.
 // Version 4a Beta 4
 // Experimental addition of Paul Miller's use of 0x44 code.
-// use #define SET_INERTIA_RATE
+// use #define SET_INERTIA_RATE 1
+#define SET_INERTIA_RATE 1
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -512,6 +513,10 @@ volatile boolean shutdownFlag = false;
 #define SF_INACTIVE  -1        // CAB Session is not active
 #define SF_UNHANDLED -1        // DCC Address is not associated with an analogue controller
 #define SF_LOCAL     -2        // DCC Address is operated only by the keypad, and not part of a CAB Session
+
+#if SET_INERTIA_RATE
+#define INERTIA        3200       // Inertia counter value. Set High
+#endif
 
 #define startAddress 1000     // multiplier for DCC address offset from device address. Device 0 uses 1000, device 1 uses 2000,...
 byte deviceAddress = 0;       // assume only unit on CAN bus (for now)
@@ -1697,7 +1702,7 @@ void messagehandler(CANFrame *msg){
         // -------------------------------------------------------------------
         case 0x44:                              // Set Speed Step Range
 
-#ifdef SET_INERTIA_RATE
+#if SET_INERTIA_RATE
 #if DEBUG
           Serial.println(F("STMOD - Set Inertia Rate"));
 #endif
@@ -2363,11 +2368,17 @@ void setSpeedAndDirection(byte controllerIndex, byte requestedSpeed, byte revers
   // update the speed display.
   displaySpeed(controllerIndex);
 }
-
+#if SET_INERTIA_RATE
+void setInertiaRate(byte session, byte rate)
+{
+  
+}
+#else
 void setSpeedSteps(byte session, byte steps)
 {
   // This is only relevent for DCC, so can be ignored
 }
+#endif
 
 /**
  * Send an error packet labelled with the DCC address
