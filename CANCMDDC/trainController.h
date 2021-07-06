@@ -34,7 +34,7 @@ class trainControllerClass
 {
   private: 
   uint8_t  currentLocoSpeed = 0;
-  uint8_t  currentLocoDirection = SF_UNHANDLED; // Changed
+  uint8_t  currentLocoDirection   = SF_UNHANDLED; // Changed
   uint8_t  targetLocoSpeed = 0;
   uint8_t  targetLocoDirection = SF_UNHANDLED;  // Changed
   int      pinA;
