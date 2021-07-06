@@ -1,5 +1,5 @@
 
-   #define VERSION 4.2
+   #define VERSION 4.4
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // I am going to make this 4.0 for now as 3 is taken.
@@ -12,7 +12,10 @@
 // Tested this version and some things worked but not SLiM/FLiM transfer.
 // Version 4a Beta 3
 // Changes to attempt to fix bugs. Call to <Arduino.h>
-// Version Updated to 4b Beta 1 as it now works.
+// Version Updated to 4b Beta 3 as it now works.
+// Version 4a Beta 4
+// Experimental addition of Paul Miller's use of 0x44 code.
+// use #define SET_INERTIA_RATE
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -747,8 +750,8 @@ volatile boolean       showingSpeeds     = false;
 //////////////////////////////////////////////////////////////////////////////////////////////
 // constants
 const byte VER_MAJ = 4;                  // code major version
-const char VER_MIN = 'b';                // code minor version
-const byte VER_BETA = 1;                 // code beta sub-version
+const char VER_MIN = 'a';                // code minor version
+const byte VER_BETA = 4;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
@@ -1693,10 +1696,18 @@ void messagehandler(CANFrame *msg){
 
         // -------------------------------------------------------------------
         case 0x44:                              // Set Speed Step Range
+
+#ifdef SET_INERTIA_RATE
+#if DEBUG
+          Serial.println(F("STMOD - Set Inertia Rate"));
+#endif
+          setInertiaRate(msg->data[1],msg->data[2]);
+#else
 #if DEBUG
           Serial.println(F("STMOD - Set speed steps"));
 #endif
           setSpeedSteps(msg->data[1],msg->data[2]);
+#endif
           break;
           
           // -------------------------------------------------------------------
