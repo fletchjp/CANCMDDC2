@@ -17,6 +17,9 @@
 // Experimental addition of Paul Miller's use of 0x44 code.
 // use #define SET_INERTIA_RATE 1
 #define SET_INERTIA_RATE 1
+// This is all more complicated than I thought.
+// There is more to it that just sending an 0x44 from the CANCAB.
+// I need to work on this more.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
