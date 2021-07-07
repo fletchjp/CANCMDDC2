@@ -66,3 +66,16 @@ The difference between this CANCMDDC and earlier versions is that it can also se
 
 The program runs on an Arduino MEGA. A UNO does not have enough memory or IO pins.
 
+## Acceleration
+
+The existing code has a fixed factor for acceleration and deceleration. I am looking into adding code developed by Paul Miller which allows the CANCAB to change the acceleration setting.
+
+## Equipment
+
+I have two versions of the equipment.
+
+The first one I built in 2019/20 and have taken out to meetings to demonstrate it. It is built on an old model railway baseboard section.
+
+I am building a second one using a Totem frame to hold the components and fit into a plastic box. I am currently sorting out the wiring.
+
+
