@@ -70,6 +70,8 @@ The program runs on an Arduino MEGA. A UNO does not have enough memory or IO pin
 
 The existing code has a fixed factor for acceleration and deceleration. I am looking into adding code developed by Paul Miller which allows the CANCAB to change the acceleration setting.
 
+In order to implement this I have to understand more about the codes sent by the CANCAB. This has lead me to the study of the MERG CBUS DCC system which I had not looked at before.
+
 ## Equipment
 
 I have two versions of the equipment.
