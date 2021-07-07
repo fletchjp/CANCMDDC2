@@ -20,6 +20,10 @@
 // This is all more complicated than I thought.
 // There is more to it that just sending an 0x44 from the CANCAB.
 // I need to work on this more.
+// At the moment the addition to the code is a dummy.
+// The reason is that the way that the train controller
+// is set up is different and Paul's code will not just drop in.
+// The data structures are different.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
