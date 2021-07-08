@@ -206,8 +206,8 @@
  Digital pin 15 (RX3)   EnableB unused - H-bridge 4a
  Digital pin 16 (TX2)   EnableA unused - H-bridge 4b
  Digital pin 17 (RX2)   EnableB unused - H-bridge 4b
- Digital pin 18 (TX1)   Shutdown       - pull low when short-circuit detected
- Digital pin 19 (RX1)   Int'upt CAN
+ Digital pin 18 (TX1)   Int'upt CAN
+ Digital pin 19 (RX1)   
  Digital pin 20 (SDA)   SDA   LCD
  Digital pin 21 (SCL)   SCL   LCD
  Digital pin 22       EnableA H1a
@@ -240,16 +240,16 @@
  Digital pin 49       r3    Keypad
  Digital pin 50 (MISO)    SO    CAN
  Digital pin 51 (MOSI)    SI    CAN
- Digital pin 52 (SCK)   Sck   CAN
- Digital pin 53 (SS)    CS    CAN
+ Digital pin 52 (SCK)     Sck   CAN
+ Digital pin 53 (SS)      CS    CAN
  Digital / Analog pin 0     Encoder 1 A
  Digital / Analog pin 1     Encoder 2 A
  Digital / Analog pin 2     Encoder 3 A
  Digital / Analog pin 3     Encoder 4 A
  Digital / Analog pin 4     Encoder 5 A
  Digital / Analog pin 5     Encoder 6 A
- Digital / Analog pin 6     Encoder 7 A - unused
- Digital / Analog pin 7     Encoder 8 A - unused
+ Digital / Analog pin 6     
+ Digital / Analog pin 7     Hall Effect Input
  Digital / Analog pin 8     Encoder 1 B
  Digital / Analog pin 9     Encoder 2 B
  Digital / Analog pin 10    Encoder 3 B
@@ -294,6 +294,8 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 
 #define ACCESSORY_REQUEST_EVENT 1  // 1 to code making a request for state.
 #define USE_SHORT_EVENTS 1 // Use short events to poll the signal.
+
+
 
 // Set this to 0 for the other hardware options
 #define LINKSPRITE 1  // Defined to use Linksprite Motor Shield
