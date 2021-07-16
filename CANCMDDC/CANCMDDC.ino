@@ -16,6 +16,8 @@
 // Version 4a Beta 4
 // Experimental addition of Paul Miller's use of 0x44 code.
 // use #define SET_INERTIA_RATE 1
+// Version 4a Beta 5
+// Make some use of PROGMEM to save memory.
 #define SET_INERTIA_RATE 1
 // This is all more complicated than I thought.
 // There is more to it that just sending an 0x44 from the CANCAB.
@@ -370,10 +372,10 @@ CBUSBUZZER moduleBuzzer;             // an example Buzzer as output
 #endif
 
 // CBUS module parameters
-unsigned char params[21];
+// unsigned char params[21]; not used
 
 // module name
-unsigned char mname[7] = { 'C', 'M', 'D', 'D', 'C', ' ', ' '};
+const unsigned char mname[7] PROGMEM = { 'C', 'M', 'D', 'D', 'C', ' ', ' '};
 
 // Set GROVE 1 for a GROVE switch which is HIGH when pressed, otherwise 0
 #define GROVE 1
@@ -385,7 +387,7 @@ void checkSwitch(); // Forward declaration of the task function
 void checkOverload(); // Forward declaration of the task function
 // This needs to be extended.
 byte nopcodes = 19;
-byte opcodes[] = {OPC_ACON, OPC_ACOF, OPC_BON, OPC_ARST, 0x08, 0x09, 0x21, 0x22, 0x23, 
+const byte opcodes[] PROGMEM = {OPC_ACON, OPC_ACOF, OPC_BON, OPC_ARST, 0x08, 0x09, 0x21, 0x22, 0x23, 
                   0x40, 0x41, 0x44, 0x45, 0x46, 0x47, 0x61, 0x63, OPC_PLOC, OPC_RESTP };
 //
 /// setup - runs once at power on
@@ -765,7 +767,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 4;                 // code beta sub-version
+const byte VER_BETA = 5;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
