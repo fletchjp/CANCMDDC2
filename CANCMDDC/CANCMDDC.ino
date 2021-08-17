@@ -1358,9 +1358,7 @@ void eventhandler(byte index, CANFrame *msg) {
 
 /* 
  *  I am going to change the event handler to process based on the opcode as is done in the
- *  message handler.  This is a big change and I am going to maintain both versions of the
- *  code for the time being
- *  
+ *  message handler. The old alternative is now removed.
  */
     byte op_code = msg->data[0];
     unsigned int node_number = (msg->data[1] << 8 ) + msg->data[2];
