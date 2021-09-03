@@ -949,6 +949,14 @@ void setupCBUS()
   CBUS.setEventHandler(eventhandler);
   CBUS.setFrameHandler(framehandler, opcodes, nopcodes);
 
+#ifdef CBUS_LONG_MESSAGE
+  // subscribe to long messages and register handler
+  cbus_long_message.subscribe(stream_ids, (sizeof(stream_ids) / sizeof(byte)), long_message_data, buffer_size, longmessagehandler);
+  // this method throttles the transmission so that it doesn't overwhelm the bus:
+  cbus_long_message.setDelay(delay_in_ms_between_messages);
+  cbus_long_message.setTimeout(1000);
+#endif
+
   // set LED and switch pins and assign to CBUS
   ledGrn.setPin(LED_GRN);
   ledYlw.setPin(LED_YLW);
@@ -1181,6 +1189,9 @@ void loop() {
 
   CBUS.process();
 
+#ifdef CBUS_LONG_MESSAGE
+  cbus_long_message.process();
+#endif
   //
   /// process console commands
   //
@@ -1209,6 +1220,11 @@ void loop() {
 // This code has been moved from the loop()
 void checkSwitch()
 {
+#ifdef CBUS_LONG_MESSAGE
+   //char long_message_output_buffer[output_buffer_size]; assigned globally
+   int string_length; // Returned by snprintf. This may exceed the actual length.
+   unsigned int message_length;
+#endif
   // Use IO_Abstraction method to read the switch pin.
   byte new_switch = ioDeviceDigitalReadS(arduinoPins, MODULE_SWITCH_PIN);
   bool button_has_changed = (new_switch != previous_switch);
@@ -1244,6 +1260,23 @@ void checkSwitch()
     }
 #endif
 
+#endif
+
+#ifdef CBUS_LONG_MESSAGE
+    while(cbus_long_message.is_sending()) { } //wait for previous message to finish.
+// bool cbus_long_message.sendLongMessage(const byte *msg, const unsigned int msg_len, 
+//                       const byte stream_id, const byte priority = DEFAULT_PRIORITY);
+    string_length = snprintf(long_message_output_buffer, output_buffer_size, "Button %d changed", new_switch);
+    message_length = strlen(long_message_output_buffer);
+    if (message_length > 0) {
+        if (cbus_long_message.sendLongMessage(long_message_output_buffer, message_length, stream_id) ) {
+          Serial << F("long message ") << long_message_output_buffer << F(" sent to ") << stream_id << endl;
+        } else {
+          Serial << F("long message sending ") << long_message_output_buffer << F(" to ") << stream_id << F(" failed with message length ") << message_length << endl;
+        }
+    } else {
+        Serial << F("long message preparation failed with message length ") << message_length << endl;
+    }
 #endif
 
    }
@@ -1482,6 +1515,38 @@ void eventhandler(byte index, CANFrame *msg) {
   return;
 }
 
+#ifdef CBUS_LONG_MESSAGE
+   byte new_message = true;
+//
+// Handler to receive a long message 
+// 
+void longmessagehandler(byte *fragment, unsigned int fragment_len, byte stream_id, byte status){
+// I need an example for what goes in here.
+     fragment[fragment_len] = 0;
+// If the message is complete it will be in fragment and I can do something with it.
+     if( new_message) { // Print this only for the start of a message.
+        Serial << F("> user long message handler: stream = ") << stream_id << F(", fragment length = ") 
+               << fragment_len << F(", fragment = |");
+        new_message = false;
+     }
+     if ( status == CBUS_LONG_MESSAGE_INCOMPLETE ) {
+     // handle incomplete message
+         Serial.write(fragment, fragment_len);
+    } else if (status == CBUS_LONG_MESSAGE_COMPLETE) {
+     // handle complete message
+        Serial.write(fragment, fragment_len);
+        Serial << F("|, status = ") << status << endl;
+        new_message = true;  // reset for the next message
+     } else {  // CBUS_LONG_MESSAGE_SEQUENCE_ERROR
+               // CBUS_LONG_MESSAGE_TIMEOUT_ERROR,
+               // CBUS_LONG_MESSAGE_CRC_ERROR
+               // raise an error?
+        Serial << F("| Message error with  status = ") << status << endl;
+        new_message = true;  // reset for the next message
+     } 
+}
+  
+#endif
 //
 /// print code version config details and copyright notice
 //
