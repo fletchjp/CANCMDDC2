@@ -27,6 +27,10 @@
 // is set up is different and Paul's code will not just drop in.
 // The data structures are different.
 //////////////////////////////////////////////////////////////////////////////
+// Version 4a Beta 6
+// Adding CBUS Long Message capability
+#define CBUS_LONG_MESSAGE
+//////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
 //
@@ -767,7 +771,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 5;                 // code beta sub-version
+const byte VER_BETA = 6;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
@@ -878,8 +882,35 @@ int taskId = TASKMGR_INVALIDID; // Set to this value so that it won't get cancel
 // CBUS objects
 CBUS2515 CBUS;                      // CBUS object
 CBUSConfig config;                  // configuration object
+#ifdef CBUS_LONG_MESSAGE
+// The Ardunio CBUS library does not yet support this.
+// create an additional object at the top of the sketch:
+CBUSLongMessage cbus_long_message(&CBUS);   // CBUS long message object
+#endif
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// module objects replaced by IO_Abstraction devices.
 CBUSLED ledGrn, ledYlw;             // LED objects
 CBUSSwitch pb_switch;               // switch object
+
+#ifdef CBUS_LONG_MESSAGE
+///////////////////////////////////////////////////////////////////////////////////////////////
+// Long message setting up.
+///////////////////////////////////////////////////////////////////////////////////////////////
+const byte stream_id = 11; // Sending stream ID - not the same as the ones to be read.
+// a list of stream IDs to subscribe to (this ID is defined by the sender):
+byte stream_ids[] = {12, 13, 14}; // These are the ones which this module will read.
+// Long message output buffer which must be global otherwise it goes out of scope.
+const unsigned int output_buffer_size = 32;
+char long_message_output_buffer[output_buffer_size];
+// a buffer for the message fragments to be assembled into
+// either sized to the maximum message length, or as much as you can afford
+const unsigned int buffer_size = 32;
+byte long_message_data[buffer_size];
+// create a handler function to receive completed long messages:
+void longmessagehandler(byte *fragment, unsigned int fragment_len, byte stream_id, byte status);
+const byte delay_in_ms_between_messages = 50;
+#endif
 
 //
 ///  setup CBUS - runs once at power on called from setup()
