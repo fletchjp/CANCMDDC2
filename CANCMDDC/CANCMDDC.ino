@@ -897,9 +897,9 @@ CBUSSwitch pb_switch;               // switch object
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Long message setting up.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-const byte stream_id = 11; // Sending stream ID - not the same as the ones to be read.
+const byte stream_id = 21; // Sending stream ID - not the same as the ones to be read.
 // a list of stream IDs to subscribe to (this ID is defined by the sender):
-byte stream_ids[] = {12, 13, 14}; // These are the ones which this module will read.
+byte stream_ids[] = {11, 12, 13, 14}; // These are the ones which this module will read.
 // Long message output buffer which must be global otherwise it goes out of scope.
 const unsigned int output_buffer_size = 32;
 char long_message_output_buffer[output_buffer_size];
