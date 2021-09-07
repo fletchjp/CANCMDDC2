@@ -967,7 +967,8 @@ void setupCBUS()
   CBUS.indicateMode(config.FLiM);
 
   // configure and start CAN bus and CBUS message processing
-  CBUS.setNumBuffers(4);         // more buffers = more memory used, fewer = less
+  CBUS.setNumBuffers(4,4);  // Set TX buffers. Default for RX is 4.
+  // more buffers = more memory used, fewer = less
 #if CANBUS8MHZ
   //CBUS.setOscFreq(CAN_OSC_FREQ);   // select the crystal frequency of the CAN module
   CBUS.setOscFreq(8000000UL);   // MCP2515 CANBUS 8Mhz 
