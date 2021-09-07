@@ -1,5 +1,5 @@
 
-   #define VERSION 4.4
+   #define VERSION 4.6
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // I am going to make this 4.0 for now as 3 is taken.
@@ -883,7 +883,6 @@ int taskId = TASKMGR_INVALIDID; // Set to this value so that it won't get cancel
 CBUS2515 CBUS;                      // CBUS object
 CBUSConfig config;                  // configuration object
 #ifdef CBUS_LONG_MESSAGE
-// The Ardunio CBUS library does not yet support this.
 // create an additional object at the top of the sketch:
 CBUSLongMessage cbus_long_message(&CBUS);   // CBUS long message object
 #endif
