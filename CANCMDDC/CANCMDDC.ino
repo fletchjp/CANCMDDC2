@@ -327,7 +327,7 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 // This may need to become something which depends on LINKSPRITE.
 #include "trainController.h"
 
-#include <Arduino.h> // This was in defs.h. I am not sure if it is needed.
+//#include <Arduino.h> // This was in defs.h. I am not sure if it is needed.
 // local header which is going to have to be adapted for pin numbers.
 //#include "defs.h" now brought on board.
 
