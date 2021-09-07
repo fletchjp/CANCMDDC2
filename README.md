@@ -80,4 +80,6 @@ The first one I built in 2019/20 and have taken out to meetings to demonstrate i
 
 I am building a second one using a Totem frame to hold the components and fit into a plastic box. I am currently sorting out the wiring.
 
+I am adding the code for CBUS long messages. I am also making use of CBUS transmit buffers.
 
+CBUS.setNumBuffers(4,4); // Set TX buffers. Default for RX is 4.
