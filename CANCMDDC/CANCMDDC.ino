@@ -1,5 +1,4 @@
-
-   #define VERSION 4.6
+#define VERSION 4.7
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // I am going to make this 4.0 for now as 3 is taken.
@@ -30,6 +29,8 @@
 // Version 4a Beta 6
 // Adding CBUS Long Message capability
 #define CBUS_LONG_MESSAGE
+// Version 4a Beta 7
+// Change to pass the configuration object to CBUS.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -771,7 +772,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 6;                 // code beta sub-version
+const byte VER_BETA = 7;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
@@ -880,8 +881,8 @@ byte ledOn;
 int taskId = TASKMGR_INVALIDID; // Set to this value so that it won't get cancelled before it exists!
 
 // CBUS objects
-CBUS2515 CBUS;                      // CBUS object
 CBUSConfig config;                  // configuration object
+CBUS2515 CBUS(config);              // CBUS object
 #ifdef CBUS_LONG_MESSAGE
 // create an additional object at the top of the sketch:
 CBUSLongMessage cbus_long_message(&CBUS);   // CBUS long message object
