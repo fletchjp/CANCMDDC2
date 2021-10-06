@@ -30,6 +30,48 @@ This is the place to look for a working version of CANCMDDC.
 
 I need to provide documentation for it.
 
+I am adding things to this to get towards a usable code which I can usefully share.
+
+The current version is Version 4 which I brought by merging the develop branch.
+
+### Version 4a Beta 1 
+
+Add code for r and z in processSerialInput. This means it will change from SLiM to FLiM without the button.
+
+### Version 4a Beta 2
+
+Change to use setupCBUS routine following CANmINnOUT
+Note: There is no way at the moment to cancel the overload buzzer.
+Tested this version and some things worked but not SLiM/FLiM transfer.
+
+### Version 4a Beta 3
+
+Changes to attempt to fix bugs. Call to <Arduino.h>. It now works.
+
+### Version 4a Beta 4
+
+Experimental addition of Paul Miller's use of 0x44 code.
+use #define SET_INERTIA_RATE 1
+This was not completed and is now disabled.
+
+## Version 4a Beta 6 MAJOR CHANGE
+
+Adding CBUS Long Message capability
+Use #define CBUS_LONG_MESSAGE
+
+## Version 4a Beta 7
+
+Change to pass the configuration object to CBUS.
+This uses new versions of CBUS and CBUS2515 libraries
+
+## Version 4a Beta 8
+
+Implement keypad 4 by 4 as in StateMachine/arduino_state_event_keypad_experiment
+using #define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
+I now have a keypad to connect up. It cannot plug directly to the MEGA shield
+as its pins are a solid set and there is a gap in the pins on the shield.
+
+
 ## Other Branches
 
 The old codes are separate branches.
