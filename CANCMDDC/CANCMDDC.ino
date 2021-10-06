@@ -17,7 +17,7 @@
 // use #define SET_INERTIA_RATE 1
 // Version 4a Beta 5
 // Make some use of PROGMEM to save memory.
-#define SET_INERTIA_RATE 1
+#define SET_INERTIA_RATE 0 // Taken out of use - not implemented yet anyway.
 // This is all more complicated than I thought.
 // There is more to it that just sending an 0x44 from the CANCAB.
 // I need to work on this more.
@@ -31,6 +31,8 @@
 #define CBUS_LONG_MESSAGE
 // Version 4a Beta 7
 // Change to pass the configuration object to CBUS.
+// Version 4a Beta 8
+// Implement keypad 4 by 4 as in CANTOTEMPIN
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
