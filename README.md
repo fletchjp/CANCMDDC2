@@ -124,11 +124,15 @@ The difference between this CANCMDDC and earlier versions is that it can also se
 
 The program runs on an Arduino MEGA. A UNO does not have enough memory or IO pins.
 
+A future version will output instructions over CBUS to external power control units with CBUS logic switching instead of relays.
+
 ## Acceleration
 
 The existing code has a fixed factor for acceleration and deceleration. I am looking into adding code developed by Paul Miller which allows the CANCAB to change the acceleration setting.
 
 In order to implement this I have to understand more about the codes sent by the CANCAB. This has lead me to the study of the MERG CBUS DCC system which I had not looked at before.
+
+This is not currently being implemented - see versions above.
 
 ## Equipment
 
@@ -136,7 +140,7 @@ I have two versions of the equipment.
 
 The first one I built in 2019/20 and have taken out to meetings to demonstrate it. It is built on an old model railway baseboard section.
 
-I am building a second one using a Totem frame to hold the components and fit into a plastic box. I am currently sorting out the wiring.
+I am building a second one using a Totem frame to hold the components and fit into a plastic box. I am currently sorting out the wiring and adding more components.
 
 ## Code
 
@@ -145,3 +149,5 @@ I am adding the code for CBUS long messages. I am also making use of CBUS transm
 CBUS.setNumBuffers(4,4); // Set TX buffers. Default for RX is 4.
 
 I have also changed over to pass the CBUSconfig object explictly to CBUS. This will allow me to rename it should I want to use the ArduinoMenu library which defines a class called config which causes problems in the client code. In that case I can rename the CBUS config to something else.
+
+See the Version information for more details.
