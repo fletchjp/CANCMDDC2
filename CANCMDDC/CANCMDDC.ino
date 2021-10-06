@@ -203,7 +203,6 @@
  This is copied from CANCMDDC and needs updating. Yes it does.
  This is particularly the case as it will be different for different hardware options.
  Pin Use map:
- Pins 2 to 9 now used for the 4 by 4 keypad. This may change later.
  Digital pin 2 (PWM)    PWM0  H1a       
  Digital pin 3 (PWM)    PWM1  H1b
  Digital pin 4 (PWM)    Enable  Buzzer
@@ -237,7 +236,7 @@
  Digital pin 32       EnableA H3b
  Digital pin 33       EnableB H3b
  Digital pin 34       LED Green  - unused
- Digital pin 35       LED Yellow - unused
+ Digital pin 35       LED Yellow - unused - extra pin for 4 by 4 keypad (c0)
  Digital pin 36       Encoder 8 Switch
                       The following are for the 4 by 3 Keypad
  Digital pin 37       c0    Keypad - uses odd-numbered pins only so that the 7-way header plugs straight in
