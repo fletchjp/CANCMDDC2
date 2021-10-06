@@ -75,12 +75,12 @@ This was not completed and is now disabled.
 Adding CBUS Long Message capability
 Use #define CBUS_LONG_MESSAGE
 
-## Version 4a Beta 7
+### Version 4a Beta 7
 
 Change to pass the configuration object to CBUS.
 This uses new versions of CBUS and CBUS2515 libraries
 
-## Version 4a Beta 8
+### Version 4a Beta 8
 
 Implement keypad 4 by 4 as in StateMachine/arduino_state_event_keypad_experiment
 using #define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
