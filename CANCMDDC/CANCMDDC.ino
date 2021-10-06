@@ -1,6 +1,7 @@
 #define VERSION 4.8
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
+// This is now the main branch.
 // I am going to make this 4.0 for now as 3 is taken.
 // Version 4a Beta 1
 // Add code for r and z in processSerialInput.
@@ -33,6 +34,9 @@
 // Change to pass the configuration object to CBUS.
 // Version 4a Beta 8
 // Implement keypad 4 by 4 as in StateMachine/arduino_state_event_keypad_experiment
+// #define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
+// I now have a keypad to connect up. It cannot plug directly to the MEGA shield
+// as its pins are a solid set and there is a gap in the pins on the shield.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -199,7 +203,8 @@
  This is copied from CANCMDDC and needs updating. Yes it does.
  This is particularly the case as it will be different for different hardware options.
  Pin Use map:
- Digital pin 2 (PWM)    PWM0  H1a
+ Pins 2 to 9 now used for the 4 by 4 keypad. This may change later.
+ Digital pin 2 (PWM)    PWM0  H1a       
  Digital pin 3 (PWM)    PWM1  H1b
  Digital pin 4 (PWM)    Enable  Buzzer
  Digital pin 5 (PWM)    PWM2  H2a
@@ -234,6 +239,7 @@
  Digital pin 34       LED Green  - unused
  Digital pin 35       LED Yellow - unused
  Digital pin 36       Encoder 8 Switch
+                      The following are for the 4 by 3 Keypad
  Digital pin 37       c0    Keypad - uses odd-numbered pins only so that the 7-way header plugs straight in
  Digital pin 38             Encoder 1 Switch
  Digital pin 39       c1    Keypad
@@ -846,7 +852,6 @@ void messagehandler(CANFrame *msg); //Handle messages from CANCABs with message 
 bool sendMessage(byte len, const byte *buf); // Send a message with the config.CANID
 void updateProcessing();
 
-
 #if KEYPAD
 #pragma region initialise keypad
 
@@ -1049,6 +1054,21 @@ void setupCBUS()
   keyPad.addEventListener(keypadEvent); // Add an event listener for this keypad
 #endif
 
+#if KEYPAD44
+    // Converted to copy the arrays.
+    for (byte i = 0; i < ROWS; i++)
+      keyLayout.setRowPin(i, rowPins[i]);
+    for (byte i = 0; i < COLS; i++)
+      keyLayout.setColPin(i, colPins[i]);
+
+    // create the keyboard mapped to arduino pins and with the layout chosen above.
+    // it will callback our listener
+    keyboard.initialise(arduinoIo, &keyLayout, &myListener);
+
+    // start repeating at 850 millis then repeat every 350ms
+    keyboard.setRepeatKeyMillis(850, 350);
+
+#endif
 
 //  //initialize all timers except for 0, to save time keeping functions
   InitTimersSafe();

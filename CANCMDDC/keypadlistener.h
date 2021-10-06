@@ -10,6 +10,7 @@ public:
         Serial.print(key);
         Serial.print(" is pressed, held = ");
         Serial.println(held);
+        
         key_pressed = key;
     }
 
