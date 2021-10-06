@@ -20,6 +20,10 @@ I have also introduced code for the 4 by 4 keypad as an alternative to the 4 by 
 
 I am planning to add CMRI code to interact with a JMRI panel implementing a signal box.
 
+I still plan to have this code as a unit controlling track sections using the 2 H bridge controllers installed in the second prototype.
+
+The stage beyond this will be a unit without the B bridges which instead uses CBUS to communicate with separate CBUS track control units which are being developed by Martin Da Costa. 
+
 John Fletcher (M6777)
 
 ## Previous work
