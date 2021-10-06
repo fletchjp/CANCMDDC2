@@ -10,6 +10,16 @@ I am going to use the name CANCMDDC for the code here as that is what it is goin
 
 The code now contains a number of significant developments from the version I was using for tests in early 2020. The most important of these is that I have introduced task management to control the actions of different parts of the code.
 
+There are now a series of further changes to reflect what is available.
+
+I have added long message capability using RFC 0005 after testing it on other Arduino modules. There is no code to use it yet.
+
+I have changed to use the new versions of libraries CBUS and CBUS2515.
+
+I have also introduced code for the 4 by 4 keypad as an alternative to the 4 by 3 keypad code. This is still under test.
+
+I am planning to add CMRI code to interact with a JMRI panel implementing a signal box.
+
 John Fletcher (M6777)
 
 ## Previous work
