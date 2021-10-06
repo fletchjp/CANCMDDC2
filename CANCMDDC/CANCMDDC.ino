@@ -1,4 +1,4 @@
-#define VERSION 4.7
+#define VERSION 4.8
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // I am going to make this 4.0 for now as 3 is taken.
@@ -32,7 +32,7 @@
 // Version 4a Beta 7
 // Change to pass the configuration object to CBUS.
 // Version 4a Beta 8
-// Implement keypad 4 by 4 as in CANTOTEMPIN
+// Implement keypad 4 by 4 as in StateMachine/arduino_state_event_keypad_experiment
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -295,6 +295,7 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 #define OLED_DISPLAY  0 // set to 0 if 128x32 OLED display is not present
 #define LCD_DISPLAY   1 // set to 0 if 4x20 char LCD display is not present
 #define KEYPAD        0 // set to 0 if 4x3 keypad is not present
+#define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
 #define CANBUS        1 // set to 0 if CAN h/w is not present
 #define HALL_EFFECT   1  // set to 0 if Hall Effect current detection is not present.
 #define CBUS_EVENTS   1  // set to 0 if CBUS events are supressed
@@ -304,6 +305,29 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 #define ACCESSORY_REQUEST_EVENT 1  // 1 to code making a request for state.
 #define USE_SHORT_EVENTS 1 // Use short events to poll the signal.
 
+#if KEYPAD44
+#include <KeyboardManager.h>
+
+#include "definitions.h"
+
+KeyboardLayout keyLayout(rows, cols, layout);
+//
+// We need a keyboard manager class too
+//
+MatrixKeyboardManager keyboard;
+
+// this examples connects the pins directly to an arduino but you could use
+// IoExpanders or shift registers instead.
+IoAbstractionRef arduinoIo = ioUsingArduino();
+
+//
+// We need a class that extends from KeyboardListener. this gets notified when
+// there are changes in the keyboard state. Now in keypadlistener.h
+//
+
+MyKeyboardListener myListener;
+
+#endif
 
 
 // Set this to 0 for the other hardware options
@@ -774,7 +798,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 7;                 // code beta sub-version
+const byte VER_BETA = 8;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
