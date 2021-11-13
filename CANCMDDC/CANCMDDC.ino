@@ -1229,13 +1229,14 @@ void checkOverload() {
 
 void loop() {
 
-  //
+  ///
   /// do CBUS message, switch and LED processing
   //
-
   CBUS.process();
 
 #ifdef CBUS_LONG_MESSAGE
+  //
+  /// cbus_long_message processing
   cbus_long_message.process();
 #endif
   //
@@ -1244,8 +1245,8 @@ void loop() {
 
   processSerialInput();
 
-  // Run IO_Abstraction tasks.
-  // This replaces actions taken here in the previous version.
+  /// Run IO_Abstraction tasks.
+  /// This replaces actions taken here in the previous version.
   taskManager.runLoop();
 
   //
@@ -1328,7 +1329,7 @@ void checkSwitch()
    }
 }
 
-// Send an event routine built to start sending events based on input from a CANCAB
+/// Send an event routine built to start sending events based on input from a CANCAB
 bool sendEvent(byte opCode,unsigned int eventNo)
 {
     CANFrame msg;
@@ -1354,8 +1355,8 @@ bool sendEvent(byte opCode,unsigned int eventNo)
 }
 
 
-// Send an event routine built to start sending events based with one extra byte
-// The events can be ACON1 or ACOF1 with 1 byte of data.
+/// Send an event routine built to start sending events based with one extra byte
+/// The events can be ACON1 or ACOF1 with 1 byte of data.
 bool sendEvent1(byte opCode, unsigned int eventNo, byte item)
 {
     CANFrame msg;
@@ -1381,7 +1382,7 @@ bool sendEvent1(byte opCode, unsigned int eventNo, byte item)
     return res;
 }
 
-// Send an event routine built to start sending events based with extra bytes
+/// Send an event routine built to start sending events based with extra bytes
 bool sendEventN(byte opCode,unsigned int eventNo, byte n, const byte* buf)
 {
   // The events can be ACON1, ACOF1, ACON2, ACOF2, ACON3, ACOF3 with 1 2 or 3 bytes of data.
@@ -1421,8 +1422,8 @@ bool sendEventN(byte opCode,unsigned int eventNo, byte n, const byte* buf)
 }
 
 
-// This replaces the CAN0.SendMsgBuff usage.
-// It uses the CANID of the current configuration.
+/// This replaces the CAN0.SendMsgBuff usage.
+/// It uses the CANID of the current configuration.
 bool sendMessage(byte len, const byte *buf)
 {
     CANFrame msg;
@@ -1563,9 +1564,9 @@ void eventhandler(byte index, CANFrame *msg) {
 
 #ifdef CBUS_LONG_MESSAGE
    byte new_message = true;
-//
-// Handler to receive a long message 
-// 
+///
+/// Handler to receive a long message 
+///
 void longmessagehandler(byte *fragment, unsigned int fragment_len, byte stream_id, byte status){
 // I need an example for what goes in here.
      fragment[fragment_len] = 0;
