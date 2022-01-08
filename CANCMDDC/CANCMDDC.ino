@@ -1,6 +1,6 @@
 /// @file CANCMDDC.ino
 /// @brief CANCMDDC main file
-#define VERSION 4.8
+#define VERSION 4.9
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // This is now the main branch.
@@ -39,6 +39,8 @@
 // #define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
 // I now have a keypad to connect up. It cannot plug directly to the MEGA shield
 // as its pins are a solid set and there is a gap in the pins on the shield.
+// Version 4a Beta 9
+// Starting to correct things because warnings are now being monitored.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -290,8 +292,25 @@
 // IoAbstraction libraries
 #include <IoAbstraction.h>
 #include <TaskManagerIO.h>
-// IoAbstraction reference to the arduino pins.
-IoAbstractionRef arduinoPins = ioUsingArduino();
+
+// 3rd party libraries as I use C++ style streaming output as used in Arduino CBUS library examples.
+#include <Streaming.h>
+
+// CBUS library header files
+#include <CBUS2515.h>               // CAN controller and CBUS class
+#include <CBUSswitch.h>             // pushbutton switch
+#include <CBUSLED.h>                // CBUS LEDs
+#if USE_CBUSBUZZER
+#include <CBUSBUZZER.h>              // CBUS Buzzer
+#endif
+#include <CBUSconfig.h>             // module configuration
+#include <cbusdefs.h>               // MERG CBUS constants
+#include <CBUSParams.h>
+
+// CANCMDDC
+#include <PWM.h>     // Library for controlling PWM Frequency
+// This may need to become something which depends on LINKSPRITE.
+#include "trainController.h"
 
 // Set this to 1 for CANBUS modules with 8 Mhz Crystal
 // Set this to 0 for Sparkfun CANBUS shields.
@@ -311,6 +330,9 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 
 #define ACCESSORY_REQUEST_EVENT 1  // 1 to code making a request for state.
 #define USE_SHORT_EVENTS 1 // Use short events to poll the signal.
+
+// IoAbstraction reference to the arduino pins.
+IoAbstractionRef arduinoPins = ioUsingArduino();
 
 #if KEYPAD44
 #include <KeyboardManager.h>
@@ -342,24 +364,6 @@ MyKeyboardListener myListener;
 #define L298N      1  // Linksprite modified with L298N output board
 
 
-// 3rd party libraries as I use C++ style streaming output as used in Arduino CBUS library examples.
-#include <Streaming.h>
-
-// CBUS library header files
-#include <CBUS2515.h>               // CAN controller and CBUS class
-#include <CBUSswitch.h>             // pushbutton switch
-#include <CBUSLED.h>                // CBUS LEDs
-#if USE_CBUSBUZZER
-#include <CBUSBUZZER.h>              // CBUS Buzzer
-#endif
-#include <CBUSconfig.h>             // module configuration
-#include <cbusdefs.h>               // MERG CBUS constants
-#include <CBUSParams.h>
-
-// CANCMDDC
-#include <PWM.h>     // Library for controlling PWM Frequency
-// This may need to become something which depends on LINKSPRITE.
-#include "trainController.h"
 
 //#include <Arduino.h> // This was in defs.h. I am not sure if it is needed.
 // local header which is going to have to be adapted for pin numbers.
@@ -416,7 +420,7 @@ CBUSBUZZER moduleBuzzer;             // an example Buzzer as output
 const unsigned char mname[7] PROGMEM = { 'C', 'M', 'D', 'D', 'C', ' ', ' '};
 
 // Set GROVE 1 for a GROVE switch which is HIGH when pressed, otherwise 0
-#define GROVE 1
+#define GROVE 0
 
 // forward function declarations
 void eventhandler(byte index, byte opc);
@@ -560,7 +564,7 @@ volatile boolean shutdownFlag = false;
 #define SF_REVERSE   0x00      // Train is running in reverse
 #define SF_LONG      0xC0      // long DCC address. top 2 bits of high byte. both 1 for long, both 0 for short.
 #define SF_INACTIVE  -1        // CAB Session is not active
-#define SF_UNHANDLED -1        // DCC Address is not associated with an analogue controller
+//#define SF_UNHANDLED -1        // DCC Address is not associated with an analogue controller (duplicate)
 #define SF_LOCAL     -2        // DCC Address is operated only by the keypad, and not part of a CAB Session
 
 #if SET_INERTIA_RATE
@@ -805,7 +809,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 8;                 // code beta sub-version
+const byte VER_BETA = 9;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
@@ -914,7 +918,7 @@ int taskId = TASKMGR_INVALIDID; // Set to this value so that it won't get cancel
 
 // CBUS objects
 CBUSConfig config;                  // configuration object
-CBUS2515 CBUS(config);              // CBUS object
+CBUS2515 CBUS(&config);              // CBUS object
 #ifdef CBUS_LONG_MESSAGE
 // create an additional object at the top of the sketch:
 CBUSLongMessage cbus_long_message(&CBUS);   // CBUS long message object
@@ -1110,7 +1114,7 @@ void setupCBUS()
 #else
 //  moduleSwitch.setPin(SWITCH, LOW);
   ioDevicePinMode(arduinoPins, MODULE_SWITCH_PIN, INPUT_PULLUP);
-  Serial << F("> Module Switch ") << SWITCH << F(" set to go LOW when pressed") << endl;
+  Serial << F("> Module Switch ") << MODULE_SWITCH_PIN << F(" set to go LOW when pressed") << endl;
 #endif 
   // Capture the initial state of the switch.
   previous_switch = ioDeviceDigitalReadS(arduinoPins, MODULE_SWITCH_PIN);
