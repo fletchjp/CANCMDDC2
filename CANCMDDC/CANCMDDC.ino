@@ -979,7 +979,7 @@ void setupCBUS()
 
   // assign to CBUS
   CBUS.setParams(params.getParams());
-  CBUS.setName(mname);
+  CBUS.setName((byte *)mname);
 
   // register our CBUS event handler, to receive event messages of learned events
   CBUS.setEventHandler(eventhandler);
@@ -1998,9 +1998,12 @@ void messagehandler(CANFrame *msg){
 #endif
 #if ACCESSORY_REQUEST_EVENT
 #if USE_SHORT_EVENTS
-      unsigned int device_number = 513;
-      Serial << F("Send request short event with device number ") << device_number << endl;
-      sendEvent(OPC_ASRQ,device_number); // Test of short event request.
+      {
+         // Local variable definition needs to be in { } 
+         unsigned int device_number = 513;
+         Serial << F("Send request short event with device number ") << device_number << endl;
+         sendEvent(OPC_ASRQ,device_number); // Test of short event request.
+      }
 #else
     //if (moduleSwitch.isPressed() ) { // Send when button is pressed.
       Serial << F("Send request long event") << endl;
