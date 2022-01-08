@@ -1,3 +1,5 @@
+/// @file CANCMDDC.ino
+/// @brief CANCMDDC main file
 #define VERSION 4.8
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
