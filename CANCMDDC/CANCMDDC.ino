@@ -638,7 +638,8 @@ boolean                cbusActive = true;
   #error("Height incorrect, please fix Adafruit_SSD1306.h!");
 #endif
 
-enum errorStates {
+// Make this a class
+enum class ErrorState : byte {
   blankError,
   noError,
   emergencyStop,
@@ -709,11 +710,11 @@ void getErrorMessage(int i)
   }
 }
 
-void serialPrintError(int i)
+void serialPrintError(byte i)
 {
  getErrorMessage(i);Serial.print(error_buffer); 
 }
-void serialPrintErrorln(int i)
+void serialPrintErrorln(byte i)
 {
  getErrorMessage(i);Serial.println(error_buffer);
 }
@@ -829,8 +830,8 @@ void locoRequest(unsigned int address, byte long_address, byte flags);
 void locoSession(byte session, unsigned int address, byte long_address, byte direction_, byte speed_);
 void sendPLOC(byte session);
 void sendDSPD(byte controllerIndex);
-void sendError(unsigned int address, byte long_address, errorStates code);
-void sendSessionError(byte session, errorStates code);
+void sendError(unsigned int address, byte long_address, ErrorState code);
+void sendSessionError(byte session, ErrorState code);
 void addSessionConsist(byte session, byte consist);
 void removeSessionConsist(byte session);
 void sendReset(void);
@@ -1163,7 +1164,7 @@ void setupCBUS()
      sendEvent(OPC_ACOF,stopEvent);
      stopEventOn = false;
    }
-   sendEvent1(OPC_ACON1,testEvent,noError); // Test of new code
+   sendEvent1(OPC_ACON1,testEvent,(byte)ErrorState::noError); // Test of new code
 #endif
 
 #if KEYPAD
@@ -1214,7 +1215,7 @@ void checkOverload() {
     // Not implemented yet
     //  digitalWrite(overloadLED, ON);
   #if DEBUG
-      serialPrintError(motorOverload);
+      serialPrintError((byte)ErrorState::motorOverload);
       //Serial.println  ("Overload detected.");
   #endif
      // I am not sure what to do about this.
@@ -1621,9 +1622,10 @@ void printConfig(void) {
   Serial << F("> © Duncan Greenwood (MERG M5767) 2019") << endl;
   Serial << F("> © John Fletcher (MERG M6777) 2019") << endl;
 #if DEBUG
-   Serial << F("> Error code test noError: ") << noError << endl;
+   byte error_code = (byte)ErrorState::noError;
+   Serial << F("> Error code test noError: ") << error_code << endl;
    Serial << F("> Error code text is : ");
-   serialPrintErrorln(noError);
+   serialPrintErrorln(error_code);
    Serial << F("> The number of controllers is: ") << NUM_CONTROLLERS << endl;
   byte controllerIndex;
   for (controllerIndex = 0; controllerIndex < NUM_CONTROLLERS; controllerIndex++)
@@ -2096,7 +2098,7 @@ void updateProcessing()
 #endif
         controllers[controllerIndex].trainController.setSpeedAndDirection(0, 0);
         releaseLoco(controllers[controllerIndex].session);
-        sendSessionError(controllers[controllerIndex].session, sessionCancelled); // Send session cancelled message out to CABs
+        sendSessionError(controllers[controllerIndex].session, ErrorState::sessionCancelled); // Send session cancelled message out to CABs
       }
 
       if (updateNow)
@@ -2199,7 +2201,7 @@ queryLoco(byte session)
     else
     {
       // session not active, so send back error
-      sendSessionError(session, noSession);
+      sendSessionError(session, ErrorState::noSession);
     }
   }
 }
@@ -2277,10 +2279,10 @@ locoRequest(unsigned int address, byte long_address, byte flags)
         Serial.println(flags);
 #endif
         if (flags == 0)
-          sendError(address, long_address, locoTaken);    // Send a Taken error
+          sendError(address, long_address, ErrorState::locoTaken);    // Send a Taken error
         else if (flags == 1)        // Steal
         {
-          sendError(address, long_address, sessionCancelled);
+          sendError(address, long_address, ErrorState::sessionCancelled);
           controllers[controllerIndex].session = SF_INACTIVE;
 #if KEYPAD
           controllers[keyFSM.currentLoco].shared = false;
@@ -2294,14 +2296,14 @@ locoRequest(unsigned int address, byte long_address, byte flags)
 #endif
         }
         else
-          sendError(address, long_address, invalidRequest);
+          sendError(address, long_address, ErrorState::invalidRequest);
         return;
       }
     }
     else
     {
       // This DCC Address is not associated with any of our controllers
-      sendError(address, long_address, invalidRequest);
+      sendError(address, long_address, ErrorState::invalidRequest);
       return;
     }
     // If we have got this far then the controller is not in use
@@ -2356,7 +2358,7 @@ void consistRequest(unsigned int address)
           Serial.print(F("Consist in use "));
           Serial.println(address);
 #endif
-          sendError(address, 0, locoTaken);
+          sendError(address, 0, ErrorState::locoTaken);
           return;
         }
       }
@@ -2366,7 +2368,7 @@ void consistRequest(unsigned int address)
         Serial.print(F("Consist not found "));
         Serial.println(address);
 #endif
-        sendError(address, 0, consistEmpty);
+        sendError(address, 0, ErrorState::consistEmpty);
         return;
       }
     }
@@ -2377,7 +2379,7 @@ void consistRequest(unsigned int address)
       Serial.print(F("Invalid consist address: "));
       Serial.println(address);
 #endif
-      sendError(address, 0, invalidRequest);
+      sendError(address, 0, ErrorState::invalidRequest);
       return;
     }
     // If we have got this far then the consist is not in use.
@@ -2547,9 +2549,10 @@ void setSpeedSteps(byte session, byte steps)
  * Send an error packet labelled with the DCC address
  */
 void
-sendError(unsigned int address, byte long_address, errorStates code)
+sendError(unsigned int address, byte long_address, ErrorState error_code)
 {
   unsigned char buf[4];
+  byte code = (byte)error_code;
 #if DEBUG
   Serial.print("Send Loco ");
   Serial.print(address);
@@ -2568,9 +2571,10 @@ sendError(unsigned int address, byte long_address, errorStates code)
  * Send a session error message to the CABs, labelled with the session number
  */
 void
-sendSessionError(byte session, errorStates code)
+sendSessionError(byte session, ErrorState error_code)
 {
   unsigned char buf[4];
+  byte code = (byte)error_code;
 #if DEBUG
   Serial.print("Send Session ");
   Serial.print(session);
