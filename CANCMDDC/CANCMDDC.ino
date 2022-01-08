@@ -858,7 +858,7 @@ bool sendMessage(byte len, const byte *buf); // Send a message with the config.C
 void updateProcessing();
 
 #if KEYPAD
-#pragma region initialise keypad
+//#pragma region initialise keypad
 
 const byte ROWS = 4; //four rows
 const byte COLS = 3; //three columns
@@ -874,7 +874,7 @@ byte colPins[COLS] = { keypins[2], keypins[1], keypins[0] };             //conne
 
                                      //initialize an instance of class NewKeypad
 Keypad keyPad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
-#pragma endregion
+//#pragma endregion
 
 /*
   The keys perform loco/speed selection according to the following FSM:
@@ -983,7 +983,7 @@ void setupCBUS()
 
   // register our CBUS event handler, to receive event messages of learned events
   CBUS.setEventHandler(eventhandler);
-  CBUS.setFrameHandler(framehandler, opcodes, nopcodes);
+  CBUS.setFrameHandler(framehandler,(byte *) opcodes, nopcodes);
 
 #ifdef CBUS_LONG_MESSAGE
   // subscribe to long messages and register handler
@@ -1554,7 +1554,7 @@ void eventhandler(byte index, CANFrame *msg) {
             } else if (op_code == OPC_ARSOF) {
                Serial << F(" : remote event is off") << endl;            
             }
-
+         break;
 #endif
 #endif
          // Space for more op codes.
@@ -1953,7 +1953,7 @@ void messagehandler(CANFrame *msg){
              {
                int requestedSpeed = msg->data[4] & 0x7f;
                controllers[controllerIndex].session = msg->data[1];
-               if (requestedSpeed = 1)
+               if (requestedSpeed == 1)
                {
                 // emergency stop
                 controllers[controllerIndex].trainController.emergencyStop();
@@ -2028,6 +2028,7 @@ void messagehandler(CANFrame *msg){
         // Process responses to AREQ and ASRQ messages.
         // I may want to set this up to handle only certain device nos.
         // It will also be possible to send data or events based on this information.
+        {
         byte local_opcode = msg->data[0];
 #if ACCESSORY_REQUEST_EVENT
          unsigned int node_number = (msg->data[1] << 8 ) + msg->data[2];
@@ -2044,7 +2045,8 @@ void messagehandler(CANFrame *msg){
         } else if (local_opcode == OPC_AROF) {
           Serial << F(" OFF message from node ") << node_number << F(" event ") << event_number << endl;
         }
-#endif        
+#endif   
+        }     
         break;
         // -------------------------------------------------------------------
         default:
@@ -2802,7 +2804,7 @@ displaySpeed(byte controllerIndex)
       // Speed 0 is Stop, and Graph 0 (nothing displayed) is otherwise unused,
       // so the first 3 graphs and the last one show more speed steps than the others, covering all remaining 127 speed steps.
 
-#pragma region section 1
+//#pragma region section 1
 
       //if (controllers[controllerIndex].trainController.eStopped == true)
       if (controllers[controllerIndex].trainController.isEmergencyStop() )
@@ -2847,9 +2849,9 @@ displaySpeed(byte controllerIndex)
           break;
         }
       }
-#pragma endregion
+//#pragma endregion
 
-#pragma region section 2
+//#pragma region section 2
       switch (speed_)
       {
       case 0:
@@ -2908,10 +2910,10 @@ displaySpeed(byte controllerIndex)
         display.print(char(4));
         break;
       }
-#pragma endregion
+//#pragma endregion
 
 
-#pragma region section 3
+//#pragma region section 3
       switch (speed_)
       {
       case 0:
@@ -2991,9 +2993,9 @@ displaySpeed(byte controllerIndex)
         break;
 
       }
-#pragma endregion
+//#pragma endregion
 
-#pragma region section 4
+//#pragma region section 4
       switch (speed_)
       {
       case 0:
@@ -3092,9 +3094,9 @@ displaySpeed(byte controllerIndex)
         display.print(char(4));
         break;
       }
-#pragma endregion
+//#pragma endregion
 
-#pragma region section 5
+//#pragma region section 5
       switch (speed_)
       {
       case 0:
@@ -3213,9 +3215,9 @@ displaySpeed(byte controllerIndex)
         display.print(char(4));
         break;
       }
-#pragma endregion
+//#pragma endregion
 
-#pragma region section 6
+//#pragma region section 6
       switch (speed_)
       {
       case 0:
@@ -3354,9 +3356,9 @@ displaySpeed(byte controllerIndex)
         display.print(char(4));
         break;
       }
-#pragma endregion
+//#pragma endregion
 
-#pragma region status line
+//#pragma region status line
       if (NUM_CONTROLLERS < 7)
       {
         display.setCursor(6, 3);
@@ -3372,7 +3374,7 @@ displaySpeed(byte controllerIndex)
         display.setCursor(19, 3);
         display.print(char(5 + controllers[controllerIndex].trainController.getDirection()));
       }
-#pragma endregion
+//#pragma endregion
 
     }
   }
