@@ -87,6 +87,11 @@ using #define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
 I now have a keypad to connect up. It cannot plug directly to the MEGA shield
 as its pins are a solid set and there is a gap in the pins on the shield.
 
+### Version 4a Beta 9
+
+#### January 2022 Bugs Fixed
+
+I have retstarted work on this. I have turned on compiler warnings using an option in the Arduino IDE. This has enabled me to track down a number of bugs in the code.
 
 ## Other Branches
 
