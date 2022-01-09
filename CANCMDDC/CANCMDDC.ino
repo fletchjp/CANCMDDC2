@@ -683,7 +683,7 @@ const char* const error_string_table[] PROGMEM = {
 
 #if CBUS_EVENTS
 // Event Nos for different events to be sent
-enum eventNos {
+enum class EventNo : byte {
   noEvent,  // not used
   testEvent,
   stopEvent,
@@ -919,7 +919,8 @@ int taskId = TASKMGR_INVALIDID; // Set to this value so that it won't get cancel
 
 // CBUS objects
 CBUSConfig config;                  // configuration object
-CBUS2515 CBUS(&config);              // CBUS object
+CBUS2515 CBUS;                      // CBUS object - all library versions
+//CBUS2515 CBUS(&config);           // CBUS object - new versions only
 #ifdef CBUS_LONG_MESSAGE
 // create an additional object at the top of the sketch:
 CBUSLongMessage cbus_long_message(&CBUS);   // CBUS long message object
@@ -1161,10 +1162,10 @@ void setupCBUS()
 // Clear stop event if it is on.
 #if CBUS_EVENTS
    if (stopEventOn) {
-     sendEvent(OPC_ACOF,stopEvent);
+     sendEvent(OPC_ACOF,(byte)EventNo::stopEvent);
      stopEventOn = false;
    }
-   sendEvent1(OPC_ACON1,testEvent,(byte)ErrorState::noError); // Test of new code
+   sendEvent1(OPC_ACON1,(byte)EventNo::testEvent,(byte)ErrorState::noError); // Test of new code
 #endif
 
 #if KEYPAD
@@ -1300,10 +1301,10 @@ void checkSwitch()
     byte opCode = (!new_switch ? OPC_ACON : OPC_ACOF);
     //byte eventNo = 1;
 #if CBUS_EVENTS
-    sendEvent(opCode,testEvent); // Test of new code.
+    sendEvent(opCode,(byte)EventNo::testEvent); // Test of new code.
     // Reset stopEvent by hand.
     if (stopEventOn) {
-      sendEvent(OPC_ACOF,stopEvent);
+      sendEvent(OPC_ACOF,(byte)EventNo::stopEvent);
       stopEventOn = false;
     }
 
@@ -2614,7 +2615,7 @@ emergencyStopAll()
   sendMessage(1, buf);
   beep_counter = 100; // sound buzzer 1 second
 #if CBUS_EVENTS
-  sendEvent(OPC_ACON,stopEvent);
+  sendEvent(OPC_ACON,(byte)EventNo::stopEvent);
   stopEventOn = true;
 #endif
 }
@@ -2641,7 +2642,7 @@ void stopAll(boolean emergency)
     }
   }
 #if CBUS_EVENTS
-  sendEvent(OPC_ACON,stopEvent);
+  sendEvent(OPC_ACON,(byte)EventNo::stopEvent);
   stopEventOn = true;
 #endif
 }
