@@ -109,6 +109,10 @@ as its pins are a solid set and there is a gap in the pins on the shield.
 
 I have retstarted work on this. I have turned on compiler warnings using an option in the Arduino IDE. This has enabled me to track down a number of bugs in the code.
 
+### Version 4a Beta 10
+
+I have edited the files to make sure that the various header files can only be called once and are available where they are needed.
+
 ## Other Branches
 
 The old codes are separate branches.
