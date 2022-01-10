@@ -10,6 +10,12 @@ I have increased the version number to 4.10 (4a beta 10) and posted that on GitH
 
 https://github.com/fletchjp/CANCMDDC2
 
+Please note that the main code is accompanied by a set of other files which should remain in the same folder with the code.
+
+Various other libraries are needed and I need to add documentation for them.
+
+Some of them are standard Arduino files and will get picked up automatically.
+
 ## Introduction
 
 This repository holds a version of CANCMDDC which uses the Arduino CBUS library of Duncan Greenwood. This means that it can exchange CBUS events with other modules. These events need to be coded by the user.
