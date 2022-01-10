@@ -1,5 +1,8 @@
 // all macros as there are overlaps.
 
+#ifndef ALL_MACROS_H
+#define ALL_MACROS_H 
+
 #define ENUM2(value1,value2,name)  enum { value1, value2 } name;
 #define ENUM3(value1,value2,value3,name)  enum { value1, value2, value3 } name;
 #define ENUM4(value1,value2,value3,value4,name)  enum { value1, value2, value3, value4 } name;
@@ -16,3 +19,5 @@
 #define LAYOUT(layout,chars)       const char layout[] PROGMEM = chars;
 
 #define BYTE_ARRAY_4(name,size,a,b,c,d) byte name[size] = {a,b,c,d};
+
+#endif

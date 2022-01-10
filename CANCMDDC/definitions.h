@@ -1,5 +1,8 @@
 // definitions.h
 
+#ifndef DEFINITIONS_H
+#define DEFINITIONS_H 
+
 // Gather all the definitions into one file.
 
 // Macros for the definitions
@@ -16,3 +19,5 @@
 // there are changes in the keyboard state. Now in keypadlistener.h
 //
 #include "keypadlistener.h"
+
+#endif

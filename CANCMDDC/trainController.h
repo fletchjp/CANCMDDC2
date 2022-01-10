@@ -6,6 +6,10 @@
  * the Free Software Foundation; version 3 of the License
  */
 
+#ifndef TRAINCONTROLLER_H
+#define TRAINCONTROLLER_H 
+
+
 // Analogue (PWM) Train Controller.
 //
 // Class: trainControllerClass
@@ -228,3 +232,6 @@ class trainControllerClass
       SetPinFrequencySafe(pinPWM, PWM_FREQUENCY);
   }
 };
+
+
+#endif

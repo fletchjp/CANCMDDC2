@@ -1,3 +1,4 @@
+
 /* Encoder Library, for measuring quadrature encoded signals
  * http://www.pjrc.com/teensy/td_libs_Encoder.html
  * Copyright (c) 2011,2013 PJRC.COM, LLC - Paul Stoffregen <paul@pjrc.com>

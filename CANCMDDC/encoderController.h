@@ -6,6 +6,10 @@
  * the Free Software Foundation; version 3 of the License
  */
 
+#ifndef ENCODERCONTROLLER_H
+#define ENCODERCONTROLLER_H 
+
+
 // Analogue (PWM) Train Controller.
 //
 // Class: encoderControllerClass
@@ -92,3 +96,6 @@ class encoderControllerClass
   // -------------------------------------------------
   // -------------------------------------------------
 };
+
+
+#endif

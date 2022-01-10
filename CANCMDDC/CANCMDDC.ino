@@ -1,6 +1,6 @@
 /// @file CANCMDDC.ino
 /// @brief CANCMDDC main file
-#define VERSION 4.9
+#define VERSION 4.10
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // This is now the main branch.
@@ -41,6 +41,8 @@
 // as its pins are a solid set and there is a gap in the pins on the shield.
 // Version 4a Beta 9
 // Starting to correct things because warnings are now being monitored.
+// Version 4a Beta 10
+// Provide a full set of checks on multiple use of header files.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -810,7 +812,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 9;                 // code beta sub-version
+const byte VER_BETA = 10;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin

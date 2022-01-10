@@ -1,5 +1,10 @@
 // keypad_defs.h
 
+#ifndef KEYPAD_DEFS_H
+#define KEYPAD_DEFS_H 
+
+#include "all_macros.h"
+
 // This defines the keyboard layout
 
 ALIAS_C_BYTE(ROWS,4)
@@ -17,3 +22,5 @@ BYTE_ARRAY_4(rowPins,ROWS,49,47,45,43)
 BYTE_ARRAY_4(colPins,COLS,41,39,37,35)
 
 ALIAS_BYTE(key_pressed,'Z')
+
+#endif
