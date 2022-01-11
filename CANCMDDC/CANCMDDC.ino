@@ -302,9 +302,6 @@
 #include <CBUS2515.h>               // CAN controller and CBUS class
 #include <CBUSswitch.h>             // pushbutton switch
 #include <CBUSLED.h>                // CBUS LEDs
-#if USE_CBUSBUZZER
-#include <CBUSBUZZER.h>              // CBUS Buzzer
-#endif
 #include <CBUSconfig.h>             // module configuration
 #include <cbusdefs.h>               // MERG CBUS constants
 #include <CBUSParams.h>
@@ -329,6 +326,9 @@
 #define CBUS_EVENTS   1  // set to 0 if CBUS events are supressed
 
 #define USE_CBUSBUZZER 0 // set to 0 if CBUSBUZZER library is not present
+#if USE_CBUSBUZZER
+#include <CBUSBUZZER.h>              // CBUS Buzzer
+#endif
 
 #define ACCESSORY_REQUEST_EVENT 1  // 1 to code making a request for state.
 #define USE_SHORT_EVENTS 1 // Use short events to poll the signal.
