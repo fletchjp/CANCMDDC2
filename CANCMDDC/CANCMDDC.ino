@@ -96,6 +96,18 @@
 /// Set this to 0 for Sparkfun CANBUS shields with 16 Mhz crystal
 #define CANBUS8MHZ 1
 
+#define DEBUG         1 // set to 0 for no debug messages, 1 for messages to console
+#define OLED_DISPLAY  0 // set to 0 if 128x32 OLED display is not present
+#define LCD_DISPLAY   1 // set to 0 if 4x20 char LCD display is not present
+#define KEYPAD        0 // set to 0 if 4x3 keypad is not present
+#define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
+#define CANBUS        1 // set to 0 if CAN h/w is not present
+#define HALL_EFFECT   1  // set to 0 if Hall Effect current detection is not present.
+#define CBUS_EVENTS   1  // set to 0 if CBUS events are supressed
+#define USE_CBUSBUZZER 0 // set to 0 if CBUSBUZZER library is not present
+#define ACCESSORY_REQUEST_EVENT 1  // 1 to code making a request for state.
+#define USE_SHORT_EVENTS 1 // Use short events to poll the signal.
+
 
 //////////////////////////////////////////////////////////////////////////
 // IoAbstraction libraries
@@ -115,27 +127,11 @@
 
 // CANCMDDC
 #include <PWM.h>     // Library for controlling PWM Frequency
-// This may need to become something which depends on LINKSPRITE.
 #include "trainController.h"
 
-
-// CANCMDDC 1.10 added extra display/keypad options plus CANBUS
-#define DEBUG         1 // set to 0 for no debug messages, 1 for messages to console
-#define OLED_DISPLAY  0 // set to 0 if 128x32 OLED display is not present
-#define LCD_DISPLAY   1 // set to 0 if 4x20 char LCD display is not present
-#define KEYPAD        0 // set to 0 if 4x3 keypad is not present
-#define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
-#define CANBUS        1 // set to 0 if CAN h/w is not present
-#define HALL_EFFECT   1  // set to 0 if Hall Effect current detection is not present.
-#define CBUS_EVENTS   1  // set to 0 if CBUS events are supressed
-
-#define USE_CBUSBUZZER 0 // set to 0 if CBUSBUZZER library is not present
 #if USE_CBUSBUZZER
 #include <CBUSBUZZER.h>              // CBUS Buzzer
 #endif
-
-#define ACCESSORY_REQUEST_EVENT 1  // 1 to code making a request for state.
-#define USE_SHORT_EVENTS 1 // Use short events to poll the signal.
 
 // IoAbstraction reference to the arduino pins.
 IoAbstractionRef arduinoPins = ioUsingArduino();
@@ -161,10 +157,6 @@ KeyboardLayout keyLayout(rows, cols, layout);
 // We need a keyboard manager class too
 //
 MatrixKeyboardManager keyboard;
-
-// this examples connects the pins directly to an arduino but you could use
-// IoExpanders or shift registers instead.
-IoAbstractionRef arduinoIo = ioUsingArduino();
 
 //
 // We need a class that extends from KeyboardListener. this gets notified when
@@ -892,7 +884,7 @@ void setupCBUS()
 
     // create the keyboard mapped to arduino pins and with the layout chosen above.
     // it will callback our listener
-    keyboard.initialise(arduinoIo, &keyLayout, &myListener);
+    keyboard.initialise(arduinoPins, &keyLayout, &myListener);
 
     // start repeating at 850 millis then repeat every 350ms
     keyboard.setRepeatKeyMillis(850, 350);
