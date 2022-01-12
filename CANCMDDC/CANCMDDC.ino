@@ -154,7 +154,15 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 MatrixKeyboardManager keyboard;
 
 #if KEYPAD
+
 MAKE_KEYBOARD_LAYOUT_3X4(keyLayout)
+
+/*
+* The following are the inputs/outputs used to drive the keypad.
+*/
+static byte keypins[] = {
+  37, 39, 41, 43, 45, 47, 49 // uses odd-numbered pins only so that the 7-way header plugs straight in
+};
 
 #elif KEYPAD44
 
@@ -247,6 +255,7 @@ const byte MODULE_SOUNDER    = 7;        // Module buzzer pin
 // I am going to have to define different pin sets for the LINKSPRITE case.
 #define NUM_CONTROLLERS  2 // the number of controllers (pairs of pwmpins)
 
+/// The TOWNSEND option has only L298N - no alternative power method
 #if L298N
 int pinI1=22;//define I1 interface
 int pinI2=23;//define I2 interface 
@@ -300,7 +309,8 @@ static int pwmpins[] = {
 };
 
 #else
-// These can be defined separately for this case
+/// This is the original CANCMDDC code which supports more controllers.
+/// These can be defined separately for this case
 #define LED         13     // Pin number for the LED
 #define SOUNDER     4
 #define SWITCH      8
@@ -324,15 +334,6 @@ static int pwmpins[] = {
   7, 8, 11, 12, 5, 6, 2, 3, 0
 };
 #endif
-#endif
-
-#if KEYPAD
-/*
-* The following are the inputs/outputs used to drive the keypad.
-*/
-static byte keypins[] = {
-  37, 39, 41, 43, 45, 47, 49 // uses odd-numbered pins only so that the 7-way header plugs straight in
-};
 #endif
 
 #if HALL_EFFECT
@@ -407,6 +408,7 @@ struct {
                 {SF_INACTIVE, (startAddress * (deviceAddress + 1)) + 1, SF_LONG, 0, false, { 0, 0, false }, trainControllerClass(pinI1, pinI2, pwmpins[0])}
                ,{SF_INACTIVE, (startAddress * (deviceAddress + 1)) + 2, SF_LONG, 0, false, { 0, 0, false }, trainControllerClass(pinI3, pinI4, pwmpins[1])}
 #else
+/// Original CANCMDDC code
                   {SF_INACTIVE, (startAddress * (deviceAddress + 1)) + 1, SF_LONG, 0, false, { 0, 0, false }, trainControllerClass(22, 23, pwmpins[0])}
                    ,{SF_INACTIVE, (startAddress * (deviceAddress + 1)) + 2, SF_LONG, 0, false, { 0, 0, false }, trainControllerClass(24, 25, pwmpins[1])}
                    ,{SF_INACTIVE, (startAddress * (deviceAddress + 1)) + 3, SF_LONG, 0, false, { 0, 0, false }, trainControllerClass(26, 27, pwmpins[2])}
@@ -425,7 +427,7 @@ struct {
 struct {
   encoderControllerClass encoderController;
 } encoders[NUM_CONTROLLERS] = {
-#if LINKSPRITE // Only 2 controllers in this case.
+#if LINKSPRITE || TOWNSEND // Only 2 controllers in this case.
                 {encoderControllerClass(A8,  A0, 38)},
                 {encoderControllerClass(A9,  A1, 40)}
 #else
