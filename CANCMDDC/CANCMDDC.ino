@@ -1,6 +1,6 @@
 /// @file CANCMDDC.ino
 /// @brief CANCMDDC main file
-#define VERSION 4.10
+#define VERSION 4.11
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // This is now the main branch.
@@ -43,6 +43,9 @@
 // Starting to correct things because warnings are now being monitored.
 // Version 4a Beta 10
 // Provide a full set of checks on multiple use of header files.
+// Version 4a Beta 11
+// Decouple L298N from LINKSPRITE and allow number of controllers to be set to 2 for other cases.
+// This works for KEYPAD44 and no keypad, not yet for KEYPAD which needs more work.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -320,7 +323,7 @@
 #define OLED_DISPLAY  0 // set to 0 if 128x32 OLED display is not present
 #define LCD_DISPLAY   1 // set to 0 if 4x20 char LCD display is not present
 #define KEYPAD        0 // set to 0 if 4x3 keypad is not present
-#define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
+#define KEYPAD44      0 // set to 0 if 4x4 keypad is not present
 #define CANBUS        1 // set to 0 if CAN h/w is not present
 #define HALL_EFFECT   1  // set to 0 if Hall Effect current detection is not present.
 #define CBUS_EVENTS   1  // set to 0 if CBUS events are supressed
@@ -360,12 +363,10 @@ MyKeyboardListener myListener;
 
 #endif
 
-
+#define L298N      1  // L298N output boards in use
+#define TOWNSEND   1  // Version for Paul Townsend
 // Set this to 0 for the other hardware options
 #define LINKSPRITE 0  // Defined to use Linksprite Motor Shield
-#define L298N      1  // Linksprite modified with L298N output board
-
-
 
 //#include <Arduino.h> // This was in defs.h. I am not sure if it is needed.
 // local header which is going to have to be adapted for pin numbers.
@@ -448,6 +449,31 @@ const byte opcodes[] PROGMEM = {OPC_ACON, OPC_ACOF, OPC_BON, OPC_ARST, 0x08, 0x0
 #define CHIPSELECT  53
 #define CBUSINTPIN  18 // 49
 
+#if TOWNSEND
+// Module pins defined here - these are not the CBUS pins.
+// Different values may be needed here ****
+const byte MODULE_LED_PIN    = 4;        // Module LED Pin using Green Pin
+const byte MODULE_SWITCH_PIN = 3;        // Module Switch Pin
+const byte MODULE_SOUNDER    = 7;        // Module buzzer pin
+// I am going to have to define different pin sets for the LINKSPRITE case.
+#define NUM_CONTROLLERS  2 // the number of controllers (pairs of pwmpins)
+
+#if L298N
+int pinI1=22;//define I1 interface
+int pinI2=23;//define I2 interface 
+int speedpinA=9;//enable motor A
+int pinI3=12;//define I3 interface 
+int pinI4=13;//define I4 interface 
+int speedpinB=10;//enable motor B
+// I have not defined an alternative here.
+#endif
+
+static int pwmpins[] = {
+  // Check these values
+  speedpinA, speedpinB, 0
+};
+
+#else
 #if LINKSPRITE
 // Module pins defined here - these are not the CBUS pins.
 const byte MODULE_LED_PIN    = 4;        // Module LED Pin using Green Pin
@@ -509,6 +535,7 @@ static int pwmpins[] = {
   7, 8, 11, 12, 5, 6, 2, 3, 0
 };
 #endif
+#endif
 
 #if KEYPAD
 /*
@@ -537,7 +564,7 @@ int countHall = 0 ;
 
 // CANCMDDC  These may need to be different fo
 // Adding a buzzer output for taught event
-#if LINKSPRITE
+#if LINKSPRITE || TOWNSEND
 int buzzer = MODULE_SOUNDER;
 #endif
 #define TONE 1000    // Set the tone for the buzzer
@@ -591,7 +618,7 @@ struct {
   } consist;
   trainControllerClass trainController;
 } controllers[NUM_CONTROLLERS] = {
-#if LINKSPRITE
+#if LINKSPRITE || TOWNSEND
                 // Values taken from the motor shield example code
                 {SF_INACTIVE, (startAddress * (deviceAddress + 1)) + 1, SF_LONG, 0, false, { 0, 0, false }, trainControllerClass(pinI1, pinI2, pwmpins[0])}
                ,{SF_INACTIVE, (startAddress * (deviceAddress + 1)) + 2, SF_LONG, 0, false, { 0, 0, false }, trainControllerClass(pinI3, pinI4, pwmpins[1])}
@@ -814,7 +841,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 10;                 // code beta sub-version
+const byte VER_BETA = 11;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
@@ -1062,7 +1089,7 @@ void setupCBUS()
 
 #if KEYPAD
   // wire up keypad events
-  keyPad.addEventListener(keypadEvent); // Add an event listener for this keypad
+  //keyPad.addEventListener(keypadEvent); // Add an event listener for this keypad
 #endif
 
 #if KEYPAD44
