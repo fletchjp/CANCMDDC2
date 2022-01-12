@@ -1,6 +1,6 @@
 /// @file CANCMDDC.ino
 /// @brief CANCMDDC main file
-#define VERSION 4.11
+#define VERSION 4.12
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // This is now the main branch.
@@ -46,6 +46,8 @@
 // Version 4a Beta 11
 // Decouple L298N from LINKSPRITE and allow number of controllers to be set to 2 for other cases.
 // This works for KEYPAD44 and no keypad, not yet for KEYPAD which needs more work.
+// Version 4a Beta 12
+// Correct number of encoders for TOWNSEND option
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -650,7 +652,7 @@ struct {
 struct {
   encoderControllerClass encoderController;
 } encoders[NUM_CONTROLLERS] = {
-#if LINKSPRITE // Only 2 controllers in this case.
+#if LINKSPRITE || TOWNSEND // Only 2 controllers in this case.
                 {encoderControllerClass(A8,  A0, 38)},
                 {encoderControllerClass(A9,  A1, 40)}
 #else
@@ -850,7 +852,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 11;                 // code beta sub-version
+const byte VER_BETA = 12;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
