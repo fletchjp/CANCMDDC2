@@ -91,7 +91,13 @@
 */
 
 //////////////////////////////////////////////////////////////////////////
+/// Options chosen here.
+/// Set this to 1 for CANBUS modules with 8 Mhz Crystal
+/// Set this to 0 for Sparkfun CANBUS shields with 16 Mhz crystal
+#define CANBUS8MHZ 1
 
+
+//////////////////////////////////////////////////////////////////////////
 // IoAbstraction libraries
 #include <IoAbstraction.h>
 #include <TaskManagerIO.h>
@@ -112,9 +118,6 @@
 // This may need to become something which depends on LINKSPRITE.
 #include "trainController.h"
 
-// Set this to 1 for CANBUS modules with 8 Mhz Crystal
-// Set this to 0 for Sparkfun CANBUS shields.
-#define CANBUS8MHZ 1
 
 // CANCMDDC 1.10 added extra display/keypad options plus CANBUS
 #define DEBUG         1 // set to 0 for no debug messages, 1 for messages to console
@@ -405,9 +408,6 @@ volatile boolean shutdownFlag = false;
 #define SF_UNHANDLED -1        // DCC Address is not associated with an analogue controller (duplicate)
 #define SF_LOCAL     -2        // DCC Address is operated only by the keypad, and not part of a CAB Session
 
-#if SET_INERTIA_RATE
-#define INERTIA        3200       // Inertia counter value. Set High
-#endif
 
 #define startAddress 1000     // multiplier for DCC address offset from device address. Device 0 uses 1000, device 1 uses 2000,...
 byte deviceAddress = 0;       // assume only unit on CAN bus (for now)
@@ -1685,17 +1685,10 @@ void messagehandler(CANFrame *msg){
         // -------------------------------------------------------------------
         case 0x44:                              // Set Speed Step Range
 
-#if SET_INERTIA_RATE
-#if DEBUG
-          Serial.println(F("STMOD - Set Inertia Rate"));
-#endif
-          setInertiaRate(msg->data[1],msg->data[2]);
-#else
 #if DEBUG
           Serial.println(F("STMOD - Set speed steps"));
 #endif
           setSpeedSteps(msg->data[1],msg->data[2]);
-#endif
           break;
           
           // -------------------------------------------------------------------
@@ -2356,17 +2349,12 @@ void setSpeedAndDirection(byte controllerIndex, byte requestedSpeed, byte revers
   // update the speed display.
   displaySpeed(controllerIndex);
 }
-#if SET_INERTIA_RATE
-void setInertiaRate(byte session, byte rate)
-{
-  
-}
-#else
+
 void setSpeedSteps(byte session, byte steps)
 {
   // This is only relevent for DCC, so can be ignored
 }
-#endif
+
 
 /**
  * Send an error packet labelled with the DCC address
