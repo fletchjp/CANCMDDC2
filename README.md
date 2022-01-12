@@ -2,6 +2,10 @@
 
 # CANCMDDC2
 
+## Version 5
+
+This is a new branch where I am going to do some work to restructure the code and sort out some of the difficulties.
+
 ## Latest news
 
 I have edited the files to make sure that the various header files can only be called once and are available where they are needed.
