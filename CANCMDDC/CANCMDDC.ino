@@ -1,141 +1,14 @@
 /// @file CANCMDDC.ino
 /// @brief CANCMDDC main file
-#define VERSION 4.11
+#define VERSION 5.00
 //////////////////////////////////////////////////////////////////////////////
-// CANCMDDC develop branch to work with the DC Controler.
-// This is now the main branch.
-// I am going to make this 4.0 for now as 3 is taken.
-// Version 4a Beta 1
-// Add code for r and z in processSerialInput.
-// This means it will change from SLiM to FLiM without the button.
-// Version 4a Beta 2
-// Change to use setupCBUS routine following CANmINnOUT
-// Note: There is no way at the moment to cancel the overload buzzer.
-// Tested this version and some things worked but not SLiM/FLiM transfer.
-// Version 4a Beta 3
-// Changes to attempt to fix bugs. Call to <Arduino.h>
-// Version Updated to 4b Beta 3 as it now works.
-// Version 4a Beta 4
-// Experimental addition of Paul Miller's use of 0x44 code.
-// use #define SET_INERTIA_RATE 1
-// Version 4a Beta 5
-// Make some use of PROGMEM to save memory.
-#define SET_INERTIA_RATE 0 // Taken out of use - not implemented yet anyway.
-// This is all more complicated than I thought.
-// There is more to it that just sending an 0x44 from the CANCAB.
-// I need to work on this more.
-// At the moment the addition to the code is a dummy.
-// The reason is that the way that the train controller
-// is set up is different and Paul's code will not just drop in.
-// The data structures are different.
+// CANCMDDC restructuring in progress based on 4a beta 11
 //////////////////////////////////////////////////////////////////////////////
-// Version 4a Beta 6
-// Adding CBUS Long Message capability
-#define CBUS_LONG_MESSAGE
-// Version 4a Beta 7
-// Change to pass the configuration object to CBUS.
-// Version 4a Beta 8
-// Implement keypad 4 by 4 as in StateMachine/arduino_state_event_keypad_experiment
-// #define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
-// I now have a keypad to connect up. It cannot plug directly to the MEGA shield
-// as its pins are a solid set and there is a gap in the pins on the shield.
-// Version 4a Beta 9
-// Starting to correct things because warnings are now being monitored.
-// Version 4a Beta 10
-// Provide a full set of checks on multiple use of header files.
 // Version 4a Beta 11
 // Decouple L298N from LINKSPRITE and allow number of controllers to be set to 2 for other cases.
 // This works for KEYPAD44 and no keypad, not yet for KEYPAD which needs more work.
 //////////////////////////////////////////////////////////////////////////////
-// CANCMDDC_V2a Beta 9
-// Ideas for using IO Abstraction library for task scheduling.
-//
-// https://www.thecoderscorner.com/products/arduino-libraries/io-abstraction/
-//
-// The only other example working is CANTEXT2
-// I will also use Martin Da Costa's modifications e.g. no defs.h file.
-// First version put together for testing.
-// At the moment I have no way to turn off the buzzer if a power alarm happens.
-/////////////////////////////////////////////////////////////////////////////
-// CANCMDDC_V2a Beta 8
-// Adding the KEYPAD and ENCODER code
-// I have missed out 2.7 as I think someone is already using it.
-// These may not be complete - leave out for now.
-//////////////////////////////////////////////////////////////////////////////////////
-// CANCMDDC_V2a Beta 6
-// 12th November 2020
-// Correcting some bugs and starting to tidy up the code.
-// The changes are in eventhandler.
-// I have taken out all the code associated with the old version of the code structure there.
-// Changed trainController.h following Dave Radcliffe for initial state of the loco.
-//////////////////////////////////////////////////////////////////////////////////////
-// CANCMDDC_V2a Beta 5
-// Adding code to explore request operations.
-// Changing to use switch based on opcode in eventhandler
-// Testing use of short events to poll the signal.
-//////////////////////////////////////////////////////////////////////////////////////
-// CANCMDDC_V2a Beta 4
-// Adding code to send events with OPC_ACONx, OPC_ACOFx with x = 1,2,3
-// Sent if CBUS_EVENTS is 1
-// Events now defined in a table.
-// Question: I have set up a message about stopping all. When should I cancel it?
-// I have put a cancel into the setup loop.
-// I need something else as well and have not sorted that out.
-// For the moment I have set up hand cancellation using the push button.
-//////////////////////////////////////////////////////////////////////////////////////
-// CANCMDDC_V2.3d
-// Experiments to look for source of intermittent operation.
-// Currently 2 outputs.
-//////////////////////////////////////////////////////////////////////////////////////
-// CANCMDDC_V2.3c
-// Modified for L298N output boards
-//////////////////////////////////////////////////////////////////////////////////////
-// CANCMDDC_V2.3b
-//
-// Motor shield power connection and Hall Effect connected
-//
-//////////////////////////////////////////////////////////////////////////////////////
-// CANCMDDC_V2.3a
-//
-// This is a new major version as I am starting to implement the motor controls.
-// I first needed to modify the message processing code to get the speed updated correctly.
-// This is now happening as the update code is in a function called as needed.
-//
-// I now need to sort out the Arduino pins for the motor shield.
-// Some of the pins in use for other things may need to be changed.
-//
-//////////////////////////////////////////////////////////////////////////////////////
-// CANCMDDC_V2.2h
-// Adding more things including the Hall Effect current detection code from Ian Hogg.
-// Also adding a lot more of the code from CANCMDDC V1.10 for the displays.
-// As I now have a 4 by 20 display I will remove code for the 2 by 16.
-//
-// CANCMDDC_V2.2g adding 2 x 16 LCD Display not completed.
-// I have put in strings for the error codes
-//
-// CANCMDDC_V2.2f exploring allocation of locos.
-//
-// CANCMDDC_V2_2e using CBUSBUZZER library optionally
-// I am going to make this optional as I do not want to have code that others cannot use
-// without the CBUSBUZZER library - until Duncan has decided what to do about it.
-// I also want to go on to add the motor control code and don't want to have two versions of that code.
-// I have started to add motor control by changing the pin numbers for the LINKSPRITE version.
-//
-// CANCMDDC_V2_2c development version to work with a CANCAB
-// This is the first version with a fix for the code error in the sendMessage routine.
-//
-// V2.2 The main change is to extend the opcodes array.
-//
-// CANCMDDC_V2_1a adapted from 2_0m using information from David Ratcliffe's CANCMDDC V1.10
-//
-// Version being configured for the Arduino MEGA with some other
-// changed settings.
-
-// First experiment to turn CBUS_1in1out2 into a CANCMDDC using the Arduino CBUS Library
-
-// I am not going to include any display or the keypad at this stage.
-
-// Copyright (c) 2019 John Fletcher
+// Copyright (c) 2019-2022 John Fletcher
 // I have included copyrights from CANCMDDC_v1_9
 // and Duncan Greenwood for the Arduino CBUS Library and example code.
 
@@ -848,9 +721,9 @@ volatile boolean       showingSpeeds     = false;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // constants
-const byte VER_MAJ = 4;                  // code major version
+const byte VER_MAJ = 5;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 11;                 // code beta sub-version
+const byte VER_BETA = 0;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
