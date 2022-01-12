@@ -362,7 +362,7 @@ MyKeyboardListener myListener;
 
 
 // Set this to 0 for the other hardware options
-#define LINKSPRITE 1  // Defined to use Linksprite Motor Shield
+#define LINKSPRITE 0  // Defined to use Linksprite Motor Shield
 #define L298N      1  // Linksprite modified with L298N output board
 
 
@@ -537,7 +537,9 @@ int countHall = 0 ;
 
 // CANCMDDC  These may need to be different fo
 // Adding a buzzer output for taught event
+#if LINKSPRITE
 int buzzer = MODULE_SOUNDER;
+#endif
 #define TONE 1000    // Set the tone for the buzzer
 
 #define MAXTIMEOUT 30      // Max number of seconds before session is timed out
