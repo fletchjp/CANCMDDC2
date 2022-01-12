@@ -107,6 +107,14 @@
 #define USE_CBUSBUZZER 0 // set to 0 if CBUSBUZZER library is not present
 #define ACCESSORY_REQUEST_EVENT 1  // 1 to code making a request for state.
 #define USE_SHORT_EVENTS 1 // Use short events to poll the signal.
+#define L298N      1  // L298N output boards in use
+#define TOWNSEND   1  // Version for Paul Townsend
+//////////////////////////////////////////////////////////////////////////////////////////
+/// These options relate to original LINKSPRITE hardware only
+/// Set this to 0 for the other hardware options
+#define LINKSPRITE 0  // Defined to use Linksprite Hardware
+/// Set GROVE 1 for a GROVE switch which is HIGH when pressed, otherwise 0
+#define GROVE 0
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -136,46 +144,33 @@
 // IoAbstraction reference to the arduino pins.
 IoAbstractionRef arduinoPins = ioUsingArduino();
 
-#if KEYPAD
+/// The keypad options need to be sorted out,
+/// integrated and tested with the two types of hardware.
+#if KEYPAD || KEYPAD44
 #include <KeyboardManager.h>
+//
+// We need a keyboard manager class too
+//
+MatrixKeyboardManager keyboard;
 
+#if KEYPAD
 MAKE_KEYBOARD_LAYOUT_3X4(keyLayout)
 
-//
-// We need a keyboard manager class too
-//
-MatrixKeyboardManager keyboard;
-
-
 #elif KEYPAD44
-#include <KeyboardManager.h>
 
 #include "definitions.h"
-
 KeyboardLayout keyLayout(rows, cols, layout);
-//
-// We need a keyboard manager class too
-//
-MatrixKeyboardManager keyboard;
 
+#endif
 //
 // We need a class that extends from KeyboardListener. this gets notified when
 // there are changes in the keyboard state. Now in keypadlistener.h
 //
-
 MyKeyboardListener myListener;
-
 #endif
 
-#define L298N      1  // L298N output boards in use
-#define TOWNSEND   1  // Version for Paul Townsend
-// Set this to 0 for the other hardware options
-#define LINKSPRITE 0  // Defined to use Linksprite Motor Shield
-
-//#include <Arduino.h> // This was in defs.h. I am not sure if it is needed.
-// local header which is going to have to be adapted for pin numbers.
-//#include "defs.h" now brought on board.
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/// Display options
 #if LCD_DISPLAY || OLED_DISPLAY 
 #include <Wire.h>    // Library for I2C comminications for display
   #if OLED_DISPLAY
@@ -203,10 +198,7 @@ MyKeyboardListener myListener;
   #endif
 #endif
 
-#if KEYPAD
-//#include <Keypad.h>
-#endif
-
+/// These were in CANCMDDC
 #define TRUE    true    // Changed to use the internal definition
 #define FALSE   false   // Changed to use the internal definition
 #define ON      1
@@ -220,14 +212,10 @@ CBUSLED moduleLED;                  // an example LED as output
 CBUSBUZZER moduleBuzzer;             // an example Buzzer as output
 #endif
 
-// CBUS module parameters
-// unsigned char params[21]; not used
 
 // module name
 const unsigned char mname[7] PROGMEM = { 'C', 'M', 'D', 'D', 'C', ' ', ' '};
 
-// Set GROVE 1 for a GROVE switch which is HIGH when pressed, otherwise 0
-#define GROVE 0
 
 // forward function declarations
 void eventhandler(byte index, byte opc);
@@ -238,9 +226,6 @@ void checkOverload(); // Forward declaration of the task function
 byte nopcodes = 19;
 const byte opcodes[] PROGMEM = {OPC_ACON, OPC_ACOF, OPC_BON, OPC_ARST, 0x08, 0x09, 0x21, 0x22, 0x23, 
                   0x40, 0x41, 0x44, 0x45, 0x46, 0x47, 0x61, 0x63, OPC_PLOC, OPC_RESTP };
-//
-/// setup - runs once at power on
-//
 
 /* pin used for manual selection of use with CANCMD or standalone. */
 /* Link pin to +5V if standalone required. */
@@ -254,8 +239,8 @@ const byte opcodes[] PROGMEM = {OPC_ACON, OPC_ACOF, OPC_BON, OPC_ARST, 0x08, 0x0
 #define CBUSINTPIN  18 // 49
 
 #if TOWNSEND
-// Module pins defined here - these are not the CBUS pins.
-// Different values may be needed here ****
+/// Module pins defined here - these are not the CBUS pins.
+/// Different values may be needed here ****
 const byte MODULE_LED_PIN    = 4;        // Module LED Pin using Green Pin
 const byte MODULE_SWITCH_PIN = 3;        // Module Switch Pin
 const byte MODULE_SOUNDER    = 7;        // Module buzzer pin
@@ -829,18 +814,13 @@ void setupCBUS()
   CBUS.begin();
 }
 
-/***************************************************************************************************
- * Arduino setup routine
- * Configures the I/O pins, initialises the CANBUS library
- * and sets up the initial session stack
- */
- void setup() {
-
-//#if DEBUG
+//
+/// setup - runs once at power on
+//
+void setup() {
 // Some use of the Serial port turned off if DEBUG = 0
   Serial.begin (115200);
   Serial << endl << endl << F("> ** CBUS CMDDCC2 module v2.2h ** ") << __FILE__ << endl;
-//#endif
 
   setupCBUS();
 
