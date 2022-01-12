@@ -323,7 +323,7 @@
 #define OLED_DISPLAY  0 // set to 0 if 128x32 OLED display is not present
 #define LCD_DISPLAY   1 // set to 0 if 4x20 char LCD display is not present
 #define KEYPAD        0 // set to 0 if 4x3 keypad is not present
-#define KEYPAD44      0 // set to 0 if 4x4 keypad is not present
+#define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
 #define CANBUS        1 // set to 0 if CAN h/w is not present
 #define HALL_EFFECT   1  // set to 0 if Hall Effect current detection is not present.
 #define CBUS_EVENTS   1  // set to 0 if CBUS events are supressed
@@ -339,7 +339,18 @@
 // IoAbstraction reference to the arduino pins.
 IoAbstractionRef arduinoPins = ioUsingArduino();
 
-#if KEYPAD44
+#if KEYPAD
+#include <KeyboardManager.h>
+
+MAKE_KEYBOARD_LAYOUT_3X4(keyLayout)
+
+//
+// We need a keyboard manager class too
+//
+MatrixKeyboardManager keyboard;
+
+
+#elif KEYPAD44
 #include <KeyboardManager.h>
 
 #include "definitions.h"
@@ -400,7 +411,7 @@ MyKeyboardListener myListener;
 #endif
 
 #if KEYPAD
-#include <Keypad.h>
+//#include <Keypad.h>
 #endif
 
 #define TRUE    true    // Changed to use the internal definition
@@ -546,8 +557,6 @@ static byte keypins[] = {
 };
 #endif
 
-
-
 #if HALL_EFFECT
 // Code for Hall Effect overload detection
 // This requires an ACS712 Hall Effect sensor connected in the positive feed to the motors.
@@ -595,7 +604,7 @@ volatile boolean shutdownFlag = false;
 #define SF_REVERSE   0x00      // Train is running in reverse
 #define SF_LONG      0xC0      // long DCC address. top 2 bits of high byte. both 1 for long, both 0 for short.
 #define SF_INACTIVE  -1        // CAB Session is not active
-//#define SF_UNHANDLED -1        // DCC Address is not associated with an analogue controller (duplicate)
+#define SF_UNHANDLED -1        // DCC Address is not associated with an analogue controller (duplicate)
 #define SF_LOCAL     -2        // DCC Address is operated only by the keypad, and not part of a CAB Session
 
 #if SET_INERTIA_RATE
@@ -892,22 +901,6 @@ void updateProcessing();
 #if KEYPAD
 //#pragma region initialise keypad
 
-const byte ROWS = 4; //four rows
-const byte COLS = 3; //three columns
-           //define the symbols on the buttons of the keypads
-char hexaKeys[ROWS][COLS] = {
-  { '1','2','3' },
-  { '4','5','6' },
-  { '7','8','9' },
-  { '*','0','#' }
-};
-byte rowPins[ROWS] = { keypins[6], keypins[5], keypins[4], keypins[3] }; //connect to the row pinouts of the keypad
-byte colPins[COLS] = { keypins[2], keypins[1], keypins[0] };             //connect to the column pinouts of the keypad
-
-                                     //initialize an instance of class NewKeypad
-Keypad keyPad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
-//#pragma endregion
-
 /*
   The keys perform loco/speed selection according to the following FSM:
   Start in idle mode with loco 0 selected.
@@ -1089,7 +1082,7 @@ void setupCBUS()
 
 #if KEYPAD
   // wire up keypad events
-  //keyPad.addEventListener(keypadEvent); // Add an event listener for this keypad
+  keyPad.addEventListener(keypadEvent); // Add an event listener for this keypad
 #endif
 
 #if KEYPAD44
