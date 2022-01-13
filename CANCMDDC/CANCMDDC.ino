@@ -783,6 +783,7 @@ void setup() {
 #endif
 
 #if KEYPAD
+  ///This needs more work.
   // wire up keypad events
   keyPad.addEventListener(keypadEvent); // Add an event listener for this keypad
 #endif
@@ -873,14 +874,16 @@ void setup() {
   #if DEBUG
     Serial.print  (F("> currentDetectQuiescent = "));
     Serial.println(currentDetectQuiescent);
+  #endif
+  /// Do I want this only when DEBUG is true? NO.
   #if LCD_DISPLAY
+    /// There is nothing here for a larger number of controllers than 2.
     if (NUM_CONTROLLERS < 3) {
        display.setCursor(0,1);
        display.print("Q current");
        display.setCursor(10,1);
        display.print(currentDetectQuiescent);
     }
-  #endif
   #endif
 
 #endif
@@ -895,11 +898,14 @@ void setup() {
 #endif
 
 #if KEYPAD
- Serial << F("> Keypad code present") << endl;
+ Serial << F("> Keypad 4 by 3 code present") << endl;
+#endif
+#if KEYPAD44
+ Serial << F("> Keypad 4 by 4 code present") << endl;
 #endif
 
 #if ENCODER
- Serial << F("> Encoder code present") << endl;
+ Serial << F("> Encoder code present for ") << NUM_CONTROLLERS << F(" encoders") << endl;
 #endif
 
   // end of setup
