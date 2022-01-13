@@ -2,9 +2,33 @@
 
 # CANCMDDC2
 
+CANCMDDC2 is a program designed to enable a user to control the power to track sections through a set of controllers.
+
+The original idea, called CANCMDDC, was to be a DC equivalent of the MERG CANCMD which controls locos using DCC.
+
+The method is to use the same control methods as CANCMD, so that CANCAB controllers and also JMRI can be assigned track sections using a number in the same way as engine numbers are used in DCC.
+
+The first versions used this method to control fixed track sections using CBUS.
+
+The method has been extended to allow encoders and a keypad to be built into the controller box.
+
+At all these stages the operation has been on an Arduino, currently an Arduino MEGA.
+
+The idea occurred to extend the use of CBUS to include events. This has involved a rewrite of the software to use Duncan Greenwood's Arduino CBUS library.
+
+This was given the name CANCMDDC2 although the name on FCU will be CANCMDDC.
+
+The current code is the result of a series of rewrites to improve the structure of the code.
+
+The idea is to make the code configurable for a range of different hardware to suit different users.
+
 ## Version 5
 
 This is a new branch where I am going to do some work to restructure the code and sort out some of the difficulties.
+
+I am putting quite a lot of the configuration code into separate header files to reduce the size of the main code.
+
+The idea is to get to the point where it easy for users to configure things for their choice of hardware.
 
 ## Latest news
 
