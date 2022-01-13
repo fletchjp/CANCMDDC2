@@ -3,6 +3,7 @@
 #define VERSION 5.00
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC restructuring in progress based on 4a beta 11
+// New header files pinmap.h and oled_display.h
 //////////////////////////////////////////////////////////////////////////////
 // Version 4a Beta 11
 // Decouple L298N from LINKSPRITE and allow number of controllers to be set to 2 for other cases.
