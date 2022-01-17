@@ -236,7 +236,8 @@ void checkOverload(); // Forward declaration of the task function
 byte nopcodes = 26;
 const byte opcodes[] PROGMEM = {OPC_ACON, OPC_ACOF, OPC_BON, OPC_ARST, 0x08, 0x09, 0x21, 0x22, 0x23, 
                   0x40, 0x41, 0x44, 0x45, 0x46, 0x47, 0x61, 0x63, OPC_PLOC, OPC_RESTP,
-                  OPC_ASON, OPC_ASOF, OPC_AROF, OPC_ARON, OPC_ARSOF, OPC_ARSON, OPC_DFUN
+                  OPC_ASON, OPC_ASOF, OPC_AROF, OPC_ARON, OPC_ARSOF, OPC_ARSON, OPC_DFUN,
+                  OPC_DFNON, OPC_DFNOF
  };
 
 /* pin used for manual selection of use with CANCMD or standalone. */
@@ -1739,9 +1740,7 @@ void messagehandler(CANFrame *msg){
          // See Section 9.1.7.1 in the Developers' Guide 6c Draft 5 page 28.
          // <0x60><Session><FR><Fn byte>
          // I am having trouble sorting out the meaning of <FR> and <Fn byte>
-         // so this is not implemented yet.
-         // There are two other codes, DFNON and DFNOF which are in the CANCAB code
-         // and not yet activated.
+         // so this is not implemented yet. I will write out the data for now.
          case OPC_DFUN:
 #if DEBUG
            Serial << F("Message handled with Opcode [ 0x") << _HEX(opcode) << F(" ]")<< endl;
@@ -1750,6 +1749,16 @@ void messagehandler(CANFrame *msg){
                 Serial << F(" 0x") << _HEX(msg->data[d]);
            }
 #endif
+         break;
+         // -------------------------------------------------------------------
+         // There are two other codes, DFNON and DFNOF which are in the CANCAB code
+         // and not yet activated. I suppose I could activate them from a keypad.
+         case OPC_DFNON:
+         case OPC_DFNOF:
+#if DEBUG
+           Serial << F("Message handled with Opcode [ 0x") << _HEX(opcode) << F(" ]")<< endl;
+           Serial << F("This is a DEFNON or DEFNOF message.") << endl;
+#endif        
          break;
          // -------------------------------------------------------------------
          // Code intended for short events coming in this way.
