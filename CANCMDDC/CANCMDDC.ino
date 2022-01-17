@@ -233,10 +233,10 @@ void framehandler(CANFrame *msg);
 void checkSwitch(); // Forward declaration of the task function
 void checkOverload(); // Forward declaration of the task function
 /// This has been extended to cover short events and request responses.
-byte nopcodes = 25;
+byte nopcodes = 26;
 const byte opcodes[] PROGMEM = {OPC_ACON, OPC_ACOF, OPC_BON, OPC_ARST, 0x08, 0x09, 0x21, 0x22, 0x23, 
                   0x40, 0x41, 0x44, 0x45, 0x46, 0x47, 0x61, 0x63, OPC_PLOC, OPC_RESTP,
-                  OPC_ASON, OPC_ASOF, OPC_AROF, OPC_ARON, OPC_ARSOF, OPC_ARSON 
+                  OPC_ASON, OPC_ASOF, OPC_AROF, OPC_ARON, OPC_ARSOF, OPC_ARSON, OPC_DFUN
  };
 
 /* pin used for manual selection of use with CANCMD or standalone. */
@@ -1226,8 +1226,12 @@ void eventhandler(byte index, CANFrame *msg) {
     Serial << F("> NN = ") << node_number << F(", EN = ") << event_number << endl;
     Serial << F("> op_code = ") << op_code << endl;
     Serial << F("> EV1 = ") << evval << endl;
+    if (node_number == 0xFFFF) {
+      /// Separate processing for taught events from a CANCAB or equivalent handled here.
+      /// These will have an event number corresponding to the function pushed.
+    } else {
     switch (op_code)
-    {
+     {
          // Event on and off
          // Handle these together based on event no.
          case OPC_ACON:
@@ -1301,6 +1305,7 @@ void eventhandler(byte index, CANFrame *msg) {
          Serial << F("Event ignored with Opcode [ 0x") << _HEX(op_code) << F(" ]")<< endl;
 #endif
     }
+   }
 
   return;
 }
@@ -1729,7 +1734,23 @@ void messagehandler(CANFrame *msg){
           // Tell all the CABs and Throttles
           emergencyStopAll();
           break;
-
+         // -------------------------------------------------------------------
+         // Code intended for Function Control coming in this way.
+         // See Section 9.1.7.1 in the Developers' Guide 6c Draft 5 page 28.
+         // <0x60><Session><FR><Fn byte>
+         // I am having trouble sorting out the meaning of <FR> and <Fn byte>
+         // so this is not implemented yet.
+         // There are two other codes, DFNON and DFNOF which are in the CANCAB code
+         // and not yet activated.
+         case OPC_DFUN:
+#if DEBUG
+           Serial << F("Message handled with Opcode [ 0x") << _HEX(opcode) << F(" ]")<< endl;
+           Serial << F("This is a DEFUN message received from the CANCAB") << endl;
+           for (byte d = 1; d < msg->len; d++) {
+                Serial << F(" 0x") << _HEX(msg->data[d]);
+           }
+#endif
+         break;
          // -------------------------------------------------------------------
          // Code intended for short events coming in this way.
          // It now turns out that a CANCAB will send long messages. 
