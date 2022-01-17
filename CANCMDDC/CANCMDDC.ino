@@ -4,6 +4,7 @@
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC restructuring in progress based on 4a beta 11
 // New header files pinmap.h and oled_display.h
+// Adding code to detect events from a CANCAB or simulation. 
 //////////////////////////////////////////////////////////////////////////////
 // Version 4a Beta 11
 // Decouple L298N from LINKSPRITE and allow number of controllers to be set to 2 for other cases.
@@ -231,10 +232,12 @@ void eventhandler(byte index, byte opc);
 void framehandler(CANFrame *msg);
 void checkSwitch(); // Forward declaration of the task function
 void checkOverload(); // Forward declaration of the task function
-// This needs to be extended.
-byte nopcodes = 19;
+/// This has been extended to cover short events and request responses.
+byte nopcodes = 25;
 const byte opcodes[] PROGMEM = {OPC_ACON, OPC_ACOF, OPC_BON, OPC_ARST, 0x08, 0x09, 0x21, 0x22, 0x23, 
-                  0x40, 0x41, 0x44, 0x45, 0x46, 0x47, 0x61, 0x63, OPC_PLOC, OPC_RESTP };
+                  0x40, 0x41, 0x44, 0x45, 0x46, 0x47, 0x61, 0x63, OPC_PLOC, OPC_RESTP,
+                  OPC_ASON, OPC_ASOF, OPC_AROF, OPC_ARON, OPC_ARSOF, OPC_ARSON 
+ };
 
 /* pin used for manual selection of use with CANCMD or standalone. */
 /* Link pin to +5V if standalone required. */
@@ -1440,6 +1443,7 @@ void framehandler(CANFrame *msg) {
 
 void messagehandler(CANFrame *msg){
 
+  // These variable types need attention.
   int id;
   long unsigned int dcc_address;
   int long_address;
@@ -1447,6 +1451,14 @@ void messagehandler(CANFrame *msg){
   int lastInBufPtr = 0;
   int lastOutBufPtr = 0;
   //messageRecordType nextMessage;  //Defined in FIFO.h which may not be used.
+
+  /// New variable for use in the switch:
+  byte opcode;
+  byte message_length = msg->len;
+  // These are declared here outside the switch and only used in some cases.
+  unsigned int node_number;
+  unsigned int device_number;
+  unsigned int event_number;
 /*
 #if OLED_DISPLAY
   if (MessageBuffer.bufferOverflow == 1)
@@ -1462,13 +1474,14 @@ void messagehandler(CANFrame *msg){
     // This simple thing to do is to avoid nextMessage and get things direct from msg
     //nextMessage = fifoMessageBuffer.getMessage();
 
-    if(msg->len > 0)            // Check to see whether data is received.
+    if(message_length > 0)            // Check to see whether data is received.
     {
+          opcode = msg->data[0];
  #if DEBUG
           Serial.print("CAN msg: ID ");
           Serial.print(msg->id, HEX);
           Serial.print(" OpCode:");
-          for(int i = 0; i< msg->len; i++)                // Print each byte of the data
+          for(int i = 0; i< message_length; i++)                // Print each byte of the data
           {
             if (i == 1)
             {
@@ -1485,7 +1498,7 @@ void messagehandler(CANFrame *msg){
 #endif
 
       // Perform the action for the received message
-      switch (msg->data[0])
+      switch (opcode)
       {
 
         case 0x07:                              // System Reset (Sent by CANCMD on power up)
@@ -1716,19 +1729,38 @@ void messagehandler(CANFrame *msg){
           // Tell all the CABs and Throttles
           emergencyStopAll();
           break;
- 
+
+         // -------------------------------------------------------------------
+         // Code intended for short events coming in this way.
+         // It now turns out that a CANCAB will send long messages. 
+        case OPC_ASOF:
+        case OPC_ASON:
+           node_number = (msg->data[1] << 8 ) + msg->data[2];
+           device_number = (msg->data[3] << 8 ) + msg->data[4];
+#if DEBUG
+           Serial << F("Message handled with Opcode [ 0x") << _HEX(opcode) << F(" ]")<< endl;
+           Serial << F("Test code to see if a message is received from the CANCAB") << endl;
+           Serial << F("or any other short message.") << endl;
+           Serial << F("node_number ") << node_number << endl; 
+           Serial << F("device_number ") << device_number << endl; 
+#endif
+        break;
         // -------------------------------------------------------------------
         case OPC_ACOF:
         case OPC_ACON:
+           node_number = (msg->data[1] << 8 ) + msg->data[2];
+           event_number = (msg->data[3] << 8 ) + msg->data[4];
 #if DEBUG
-           Serial << F("Message handled with Opcode [ 0x") << _HEX(msg->data[0]) << F(" ]")<< endl;
+           Serial << F("Message handled with Opcode [ 0x") << _HEX(opcode) << F(" ]")<< endl;
            Serial << F("Test code to see if a message is getting sent") << endl;
+           Serial << F("node_number ") << node_number << endl; 
+           Serial << F("event_number ") << event_number << endl; 
 #endif
 #if ACCESSORY_REQUEST_EVENT
 #if USE_SHORT_EVENTS
       {
          // Local variable definition needs to be in { } 
-         unsigned int device_number = 513;
+         device_number = 513;
          Serial << F("Send request short event with device number ") << device_number << endl;
          sendEvent(OPC_ASRQ,device_number); // Test of short event request.
       }
@@ -1759,19 +1791,19 @@ void messagehandler(CANFrame *msg){
         {
         byte local_opcode = msg->data[0];
 #if ACCESSORY_REQUEST_EVENT
-         unsigned int node_number = (msg->data[1] << 8 ) + msg->data[2];
-         unsigned int event_number = (msg->data[3] << 8 ) + msg->data[4];
+         unsigned int local_node_number = (msg->data[1] << 8 ) + msg->data[2];
+         unsigned int local_event_number = (msg->data[3] << 8 ) + msg->data[4];
 #if USE_SHORT_EVENTS
         if (local_opcode == OPC_ARSON) {
-          Serial << F(" ON message from device ") << event_number << endl;
+          Serial << F(" ON message from device ") << local_event_number << endl;
         } else if (local_opcode == OPC_ARSOF) {
-          Serial << F(" OFF message from device ") << event_number << endl;
+          Serial << F(" OFF message from device ") << local_event_number << endl;
         }
 #endif
         if (local_opcode == OPC_ARON) {
-          Serial << F(" ON message from event ") << node_number << F(" event ") << event_number << endl;
+          Serial << F(" ON message from event ") << local_node_number << F(" event ") << local_event_number << endl;
         } else if (local_opcode == OPC_AROF) {
-          Serial << F(" OFF message from node ") << node_number << F(" event ") << event_number << endl;
+          Serial << F(" OFF message from node ") << local_node_number << F(" event ") << local_event_number << endl;
         }
 #endif   
         }     
@@ -1780,7 +1812,7 @@ void messagehandler(CANFrame *msg){
         default:
           // ignore any other CBus messages
 #if DEBUG
-           Serial << F("Message handled with Opcode [ 0x") << _HEX(msg->data[0]) << F(" ]")<< endl;
+           Serial << F("Message handled with Opcode [ 0x") << _HEX(opcode) << F(" ]")<< endl;
 #endif
           break;
       }
