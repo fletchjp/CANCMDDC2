@@ -1,6 +1,6 @@
 /// @file CANCMDDC.ino
 /// @brief CANCMDDC main file
-#define VERSION 4.12
+#define VERSION 4.13
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // This is now the main branch.
@@ -48,6 +48,8 @@
 // This works for KEYPAD44 and no keypad, not yet for KEYPAD which needs more work.
 // Version 4a Beta 12
 // Correct number of encoders for TOWNSEND option
+// Version 4a Beta 13
+// Add code for 4x3 Keypad and also operational code
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -299,6 +301,7 @@
 // IoAbstraction libraries
 #include <IoAbstraction.h>
 #include <TaskManagerIO.h>
+#include <KeyboardManager.h>
 
 // 3rd party libraries as I use C++ style streaming output as used in Arduino CBUS library examples.
 #include <Streaming.h>
@@ -324,8 +327,8 @@
 #define DEBUG         1 // set to 0 for no debug messages, 1 for messages to console
 #define OLED_DISPLAY  0 // set to 0 if 128x32 OLED display is not present
 #define LCD_DISPLAY   1 // set to 0 if 4x20 char LCD display is not present
-#define KEYPAD        0 // set to 0 if 4x3 keypad is not present
-#define KEYPAD44      1 // set to 0 if 4x4 keypad is not present
+#define KEYPAD        1 // set to 0 if 4x3 keypad is not present
+#define KEYPAD44      0 // set to 0 if 4x4 keypad is not present
 #define CANBUS        1 // set to 0 if CAN h/w is not present
 #define HALL_EFFECT   1  // set to 0 if Hall Effect current detection is not present.
 #define CBUS_EVENTS   1  // set to 0 if CBUS events are supressed
@@ -341,36 +344,45 @@
 // IoAbstraction reference to the arduino pins.
 IoAbstractionRef arduinoPins = ioUsingArduino();
 
-#if KEYPAD
-#include <KeyboardManager.h>
 
-MAKE_KEYBOARD_LAYOUT_3X4(keyLayout)
+#if KEYPAD || KEYPAD44
 
-//
-// We need a keyboard manager class too
-//
-MatrixKeyboardManager keyboard;
+#if KEYPAD 
+
+byte key_pressed;
+
+const byte ROWS = 4; /// four rows
+const byte COLS = 3; /// four columns
+/// define the symbols on the buttons of the keypads
+/// PROGMEM is important.
+const char layout[] PROGMEM = "123456789*0#"; // Chars have to be in a string.
+//  '1','2','3','4','5','6','7','8','9','*','0','#'
+//};
+/// These are in order of Keypad pins from 1 to 8.
+/// Pin 1 is on the left with the pad face up.
+byte rowPins[ROWS] = {49, 47, 45, 43}; //connect to the row pinouts of the keypad
+byte colPins[COLS] = {41, 39, 37}; //connect to the column pinouts of the keypad
+/// This seems fussy. ROWS and COLS will not work here.
+uint8_t rows = ROWS;
+uint8_t cols = COLS;
 
 
-#elif KEYPAD44
-#include <KeyboardManager.h>
+#else
 
 #include "definitions.h"
 
-KeyboardLayout keyLayout(rows, cols, layout);
-//
-// We need a keyboard manager class too
-//
-MatrixKeyboardManager keyboard;
+#endif
 
-// this examples connects the pins directly to an arduino but you could use
-// IoExpanders or shift registers instead.
-IoAbstractionRef arduinoIo = ioUsingArduino();
+/// Set up the keyLayout
+KeyboardLayout keyLayout(rows, cols, layout);
 
 //
 // We need a class that extends from KeyboardListener. this gets notified when
 // there are changes in the keyboard state. Now in keypadlistener.h
 //
+#include "keypadlistener.h"
+
+MatrixKeyboardManager keyPad;
 
 MyKeyboardListener myListener;
 
@@ -410,10 +422,6 @@ MyKeyboardListener myListener;
          https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
   */
   #endif
-#endif
-
-#if KEYPAD
-//#include <Keypad.h>
 #endif
 
 #define TRUE    true    // Changed to use the internal definition
@@ -548,15 +556,6 @@ static int pwmpins[] = {
   7, 8, 11, 12, 5, 6, 2, 3, 0
 };
 #endif
-#endif
-
-#if KEYPAD
-/*
-* The following are the inputs/outputs used to drive the keypad.
-*/
-static byte keypins[] = {
-  37, 39, 41, 43, 45, 47, 49 // uses odd-numbered pins only so that the 7-way header plugs straight in
-};
 #endif
 
 #if HALL_EFFECT
@@ -852,7 +851,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 12;                 // code beta sub-version
+const byte VER_BETA = 13;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
@@ -1082,11 +1081,6 @@ void setupCBUS()
 
 #endif
 
-#if KEYPAD
-  // wire up keypad events
-  keyPad.addEventListener(keypadEvent); // Add an event listener for this keypad
-#endif
-
 #if KEYPAD44
     // Converted to copy the arrays.
     for (byte i = 0; i < ROWS; i++)
@@ -1096,10 +1090,10 @@ void setupCBUS()
 
     // create the keyboard mapped to arduino pins and with the layout chosen above.
     // it will callback our listener
-    keyboard.initialise(arduinoIo, &keyLayout, &myListener);
+    keyPad.initialise(arduinoPins, &keyLayout, &myListener);
 
     // start repeating at 850 millis then repeat every 350ms
-    keyboard.setRepeatKeyMillis(850, 350);
+    keyPad.setRepeatKeyMillis(850, 350);
 
 #endif
 
