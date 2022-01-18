@@ -3451,7 +3451,7 @@ void displayVersion()
   display.println("CANCMDDC");
   display.setTextSize(1);
   display.setCursor(60,24);
-  display.println("v2.3");
+  display.println("v4.12");
   display.display();
 #endif
 #if LCD_DISPLAY
