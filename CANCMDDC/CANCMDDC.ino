@@ -1757,7 +1757,7 @@ void messagehandler(CANFrame *msg){
          case OPC_DFNOF:
 #if DEBUG
            Serial << F("Message handled with Opcode [ 0x") << _HEX(opcode) << F(" ]")<< endl;
-           Serial << F("This is a DEFNON or DEFNOF message.") << endl;
+           Serial << F("This is a DFNON or DFNOF message.") << endl;
 #endif        
          break;
          // -------------------------------------------------------------------
