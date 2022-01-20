@@ -940,18 +940,260 @@ void setupKeyPad() {
     for (byte i = 0; i < COLS; i++)
       keyLayout.setColPin(i, colPins[i]);
 
-    /// create the keyboard mapped to arduino pins and with the layout chosen above.
+    /// create the keyPad mapped to arduino pins and with the layout chosen above.
     /// It will callback our listener
-    keyboard.initialise(arduinoIo, &keyLayout, &myListener);
+    keyPad.initialise(arduinoPins, &keyLayout, &myListener);
 
     /// start repeating at 850 millis then repeat every 350ms
-    keyboard.setRepeatKeyMillis(850, 350);
+    keyPad.setRepeatKeyMillis(850, 350);
 
-    Serial.println("Keyboard is initialised!");
+    Serial.println("KeyPad is initialised!");
 
 }
 
+
+/// From the previous CANCMDDC
+void keypadEvent(char key)
+{
+#if DEBUG
+  const String states[] = {
+    F("Idle "),
+    F("Loco Select "),
+    F("Loco Stop "),
+    F("Speed Select "),
+    F("Speed Digit "),
+    F("Loco Emerg Stop "),
+    F("Steal or Share ")
+  };
 #endif
+
+  // Taking care of keypad events.
+  switch (keyPad.getState())
+  {
+  case PRESSED:
+    previousKeypress = 0;
+    nBeeps(1, 10);
+
+#if OLED_DISPLAY || LCD_DISPLAY
+    display.backlight();
+    previousTurnon = millis();
+#endif
+
+    #if DEBUG
+    Serial.print(states[keyFSM.state]);
+    Serial.println(key);
+    #endif
+
+    if (keyFSM.state == idle)
+      keyFSM.state = locoSelect;
+    else
+    {
+      switch (key)
+      {
+      case '*':
+        switch (keyFSM.state)
+        {
+        case idle:
+        case locoSelect:    // stop current loco
+          if (keyFSM.currentLoco != 255)
+          {
+            controllers[keyFSM.currentLoco].trainController.setSpeed(0);
+
+            if (controllers[keyFSM.currentLoco].shared)
+              sendDSPD(keyFSM.currentLoco);
+
+            keyFSM.state = locoStop;
+          }
+          break;
+        case locoStop:      // stop all locos.
+          stopAll(false);
+          keyFSM.state = speedSelect;
+          break;
+        case speedSelect:   // Enter Loco select mode. Timeout after 3 secs to Speed select mode.
+          keyFSM.state = locoSelect;
+          break;
+        case speedDigit:    // cancel current input and enter Speed select mode.
+        case locoEmergStop: // enter Speed select mode.
+          keyFSM.state = speedSelect;
+          break;
+        case stealOrShare:  // share loco
+          keyFSM.state = speedSelect;
+          controllers[keyFSM.currentLoco].shared = true;
+          break;
+        }
+        break;
+      case '#':
+        switch (keyFSM.state)
+        {
+        case locoSelect:    // enter Speed select mode
+          keyFSM.state = speedSelect;
+          break;
+        case locoStop:      // change direction
+          if (keyFSM.currentLoco != 255)
+          {
+            controllers[keyFSM.currentLoco].trainController.setSpeedAndDirection(controllers[keyFSM.currentLoco].trainController.getDirection() ^ 1, 0);
+
+            if (controllers[keyFSM.currentLoco].shared)
+              sendDSPD(keyFSM.currentLoco);
+
+            keyFSM.state = speedSelect;
+          }
+          break;
+        case idle:
+        case speedSelect:   // eStop selected loco.
+          if (keyFSM.currentLoco != 255)
+          {
+            controllers[keyFSM.currentLoco].trainController.emergencyStop();
+
+            if (controllers[keyFSM.currentLoco].shared)
+              sendDSPD(keyFSM.currentLoco);
+
+            keyFSM.state = locoEmergStop;
+          }
+          break;
+        case speedDigit:    // accept entered speed.  If invalid(> 127) cancel current input and enter Speed select mode.
+        {
+#if DEBUG
+          Serial.print(F("Digits are: "));
+          Serial.print(keyFSM.digits[0]);
+          Serial.print(keyFSM.digits[1]);
+          Serial.println(keyFSM.digits[2]);
+#endif
+
+
+          int speed = atoi(keyFSM.digits);
+#if DEBUG
+          Serial.print(F("Speed is: "));
+          Serial.println(speed);
+#endif
+          if (speed > 127)
+          {
+            nBeeps(1, 100);
+            keyFSM.digits[2] = ' ';
+            keyFSM.digits[1] = ' ';
+            keyFSM.digits[0] = ' ';
+            keyFSM.state = speedSelect;
+          }
+          else
+          {
+#if DEBUG
+            Serial.print(F("currentLoco: "));
+            Serial.println(keyFSM.currentLoco + 1);
+#endif
+            if (keyFSM.currentLoco != 255)
+            {
+              controllers[keyFSM.currentLoco].trainController.setSpeed(speed);
+#if DEBUG
+              Serial.print(F("Session: "));
+              Serial.println(controllers[keyFSM.currentLoco].session);
+#endif
+              if (controllers[keyFSM.currentLoco].session > SF_INACTIVE)
+              {
+#if DEBUG
+                Serial.print(F("Shared: "));
+                Serial.println(controllers[keyFSM.currentLoco].shared);
+#endif
+                if (controllers[keyFSM.currentLoco].shared)
+                  sendDSPD(keyFSM.currentLoco);
+                else
+                  sendSessionError(controllers[keyFSM.currentLoco].session, sessionCancelled); // session has been stolen, so cancel session on owning CAB
+              }
+            }
+
+            keyFSM.state = idle;
+#if OLED_DISPLAY || LCD_DISPLAY
+            showingSpeeds = false;
+            showSpeeds();
+#endif
+            return;
+          }
+
+          break;
+        }
+        case locoEmergStop: // eStop all locos.
+          emergencyStopAll();
+          keyFSM.state = idle;
+          return;
+          break;
+        case stealOrShare: // steal loco from CAB
+          sendSessionError(controllers[keyFSM.currentLoco].session, locoTaken); // session has been taken, so send message to CAB
+          controllers[keyFSM.currentLoco].shared = false;
+          controllers[keyFSM.currentLoco].session = SF_LOCAL;
+          keyFSM.state = speedSelect;
+          break;
+        }
+        break;
+
+      default: // digit 0-9
+        switch (keyFSM.state)
+        {
+        case locoSelect:    // Select the loco and handle shared status
+        {
+          int selectedLoco = String(key).toInt();
+
+          if (selectedLoco != 0
+            &&
+            selectedLoco <= String(NUM_CONTROLLERS).toInt()
+            )
+          {
+            keyFSM.previousLoco = keyFSM.currentLoco;
+            keyFSM.currentLoco = (selectedLoco - 1);
+
+            if (controllers[keyFSM.currentLoco].session <= SF_INACTIVE) // not owned by CAB
+            {
+              controllers[keyFSM.currentLoco].session = SF_LOCAL;
+              keyFSM.state = speedSelect; // Enter Speed select mode with that loco selected.
+            }
+            else
+            {
+              keyFSM.state = stealOrShare;
+            }
+          }
+          break;
+        }
+        case locoStop:      // <nothing>
+          break;
+        case speedSelect:   // Enter speed digit.
+          keyFSM.digits[0] = ' ';
+          keyFSM.digits[1] = ' ';
+          keyFSM.digits[2] = key;
+          keyFSM.state = speedDigit;
+
+          //Serial.println(previousKeypress);
+
+          break;
+        case speedDigit:    // Enter speed digit. Scroll to left.
+
+          keyFSM.digits[0] = keyFSM.digits[1];
+          keyFSM.digits[1] = keyFSM.digits[2];
+          keyFSM.digits[2] = key;
+
+          break;
+        case locoEmergStop: // <nothing>
+          break;
+        }
+      }
+    }
+    previousKeypress = millis();
+
+#if LCD_DISPLAY || OLED_DISPLAY
+#if LCD_DISPLAY
+    displayOptions();
+#else
+#endif
+#endif
+    break;
+
+  case RELEASED:
+    break;
+
+  case HOLD:
+    break;
+  }
+}
+
+#endif
+
 
 // Forward declaration of variable used to detect switch change.
 byte previous_switch;
