@@ -3,6 +3,8 @@
 #ifndef KEYPAD_LISTENER_H
 #define KEYPAD_LISTENER_H
 
+typedef enum{ IDLE, PRESSED, HOLD, RELEASED } KeyState;
+
 class MyKeyboardListener : public KeyboardListener {
 public:
     void keyPressed(char key, bool held) override {

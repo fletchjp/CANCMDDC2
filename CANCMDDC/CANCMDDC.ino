@@ -951,6 +951,8 @@ void setupKeyPad() {
 
 }
 
+// From Key.h
+typedef enum{ IDLE, PRESSED, HOLD, RELEASED } KeyState;
 
 /// From the previous CANCMDDC
 void keypadEvent(char key)
