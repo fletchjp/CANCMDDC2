@@ -135,10 +135,6 @@
 // Version being configured for the Arduino MEGA with some other
 // changed settings.
 
-// First experiment to turn CBUS_1in1out2 into a CANCMDDC using the Arduino CBUS Library
-
-// I am not going to include any display or the keypad at this stage.
-
 // Copyright (c) 2019 John Fletcher
 // I have included copyrights from CANCMDDC_v1_9
 // and Duncan Greenwood for the Arduino CBUS Library and example code.
@@ -612,9 +608,12 @@ volatile boolean shutdownFlag = false;
 #define INERTIA        3200       // Inertia counter value. Set High
 #endif
 
-#define startAddress 1000     // multiplier for DCC address offset from device address. Device 0 uses 1000, device 1 uses 2000,...
+#define startAddress 1000     // multiplier for DCC address offset from device address. 
+// Device 0 uses 1000, device 1 uses 2000,...
 byte deviceAddress = 0;       // assume only unit on CAN bus (for now)
 
+// NOTE: controllers' index (not the DCC address) is used by the keypad handler. 
+// Making the last digit of the DCC address = the index aids clarity for user.
 struct {
   int             session;
   unsigned int    DCCAddress;
@@ -932,6 +931,26 @@ struct {
 
 volatile unsigned long previousKeypress = 0;
 volatile unsigned long interval = 4000;
+
+void setupKeyPad() {
+
+    // Converted to copy the arrays.
+    for (byte i = 0; i < ROWS; i++)
+      keyLayout.setRowPin(i, rowPins[i]);
+    for (byte i = 0; i < COLS; i++)
+      keyLayout.setColPin(i, colPins[i]);
+
+    /// create the keyboard mapped to arduino pins and with the layout chosen above.
+    /// It will callback our listener
+    keyboard.initialise(arduinoIo, &keyLayout, &myListener);
+
+    /// start repeating at 850 millis then repeat every 350ms
+    keyboard.setRepeatKeyMillis(850, 350);
+
+    Serial.println("Keyboard is initialised!");
+
+}
+
 #endif
 
 // Forward declaration of variable used to detect switch change.
@@ -994,6 +1013,10 @@ void setupCBUS()
 
   Serial << F("> mode = ") << ((config.FLiM) ? "FLiM" : "SLiM") << F(", CANID = ") << config.CANID;
   Serial << F(", NN = ") << config.nodeNum << endl;
+
+#if KEYPAD
+  setupKeyPad();
+#endif
 
   // show code version and copyright notice
   printConfig();
