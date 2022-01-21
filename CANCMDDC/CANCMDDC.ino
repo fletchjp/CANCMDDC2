@@ -952,11 +952,9 @@ void setupKeyPad() {
 
 }
 
-// From Key.h
-typedef enum{ IDLE, PRESSED, HOLD, RELEASED } KeyState;
 
 /// From the previous CANCMDDC
-void keypadEvent(char key)
+void keypadEvent(char key,KeyState key_state = KeyState::IDLE)
 {
 #if DEBUG
   const String states[] = {
@@ -971,9 +969,9 @@ void keypadEvent(char key)
 #endif
 
   // Taking care of keypad events.
-  switch (keyPad.getState())
+  switch (key_state)
   {
-  case PRESSED:
+  case KeyState::PRESSED:
     previousKeypress = 0;
     nBeeps(1, 10);
 
@@ -1099,7 +1097,7 @@ void keypadEvent(char key)
                 if (controllers[keyFSM.currentLoco].shared)
                   sendDSPD(keyFSM.currentLoco);
                 else
-                  sendSessionError(controllers[keyFSM.currentLoco].session, sessionCancelled); // session has been stolen, so cancel session on owning CAB
+                  sendSessionError(controllers[keyFSM.currentLoco].session, ErrorState::sessionCancelled); // session has been stolen, so cancel session on owning CAB
               }
             }
 
@@ -1119,7 +1117,7 @@ void keypadEvent(char key)
           return;
           break;
         case stealOrShare: // steal loco from CAB
-          sendSessionError(controllers[keyFSM.currentLoco].session, locoTaken); // session has been taken, so send message to CAB
+          sendSessionError(controllers[keyFSM.currentLoco].session, ErrorState::locoTaken); // session has been taken, so send message to CAB
           controllers[keyFSM.currentLoco].shared = false;
           controllers[keyFSM.currentLoco].session = SF_LOCAL;
           keyFSM.state = speedSelect;
@@ -1187,12 +1185,106 @@ void keypadEvent(char key)
 #endif
     break;
 
-  case RELEASED:
+  case KeyState::RELEASED:
     break;
 
-  case HOLD:
+  case KeyState::HOLD:
+    break;
+
+  default:
+    break;
+    
+  }
+}
+
+void doAfter()
+{
+  previousKeypress = 0;
+
+#if DEBUG
+  Serial.println(F("** TimeOut **"));
+#endif
+
+  if (keyFSM.state == stealOrShare)
+    keyFSM.currentLoco = keyFSM.previousLoco;
+
+  keyFSM.state = idle;
+  keyFSM.digits[2] = ' ';
+  keyFSM.digits[1] = ' ';
+  keyFSM.digits[0] = ' ';
+
+#if LCD_DISPLAY || OLED_DISPLAY
+  showingSpeeds = false;
+  showSpeeds();
+#endif
+}
+
+void displayOptions()
+{
+#if LCD_DISPLAY
+  display.clear();
+  display.setCursor(0, 0);
+
+  if (keyFSM.state != speedDigit)
+  {
+    display.print(F("Current Loco is: "));
+    display.print((String)((keyFSM.currentLoco + 1) % 256));
+  }
+
+  switch (keyFSM.state)
+  {
+  case locoSelect:
+    display.setCursor(0, 1);
+    display.print(F(" * to Stop Loco"));
+    display.setCursor(0, 2);
+    display.print(F(" # to Select Speed"));
+    display.setCursor(0, 3);
+    display.print(" 1-" + String(String(NUM_CONTROLLERS).toInt()));
+    display.print(F(" to Select Loco"));
+    break;
+  case locoStop:
+    display.setCursor(0, 1);
+    display.print(F("Current Direction: "));
+    if (showingSpeeds == false)
+      setupBarGraph();
+    display.print(char(5 + controllers[keyFSM.currentLoco].trainController.getDirection()));
+    display.setCursor(0, 2);
+    display.print(F(" * to Stop all Locos"));
+    display.setCursor(0, 3);
+    display.print(F(" # to Reverse Loco"));
+    break;
+  case speedSelect:
+    display.setCursor(0, 1);
+    display.print(F(" * to Select Loco"));
+    display.setCursor(0, 2);
+    display.print(F(" # to STOP Loco"));
+    display.setCursor(0, 3);
+    display.print(F(" 0-9 to enter Speed"));
+    break;
+  case speedDigit:
+    display.print(F(" * to Cancel"));
+    display.setCursor(0, 1);
+    display.print(F(" # to Accept"));
+    display.setCursor(0, 2);
+    display.print(F(" 0-9 to Enter Speed"));
+    display.setCursor(0, 3);
+    display.print(F(" Entered speed: "));
+    display.print(keyFSM.digits[0]);
+    display.print(keyFSM.digits[1]);
+    display.print(keyFSM.digits[2]);
+    break;
+  case locoEmergStop:
+    display.setCursor(0, 2);
+    display.print(F(" # to STOP all Locos"));
+    break;
+  case stealOrShare:
+    display.setCursor(0, 1);
+    display.print(F(" * to Share Loco"));
+    display.setCursor(0, 3);
+    display.print(F(" # to Steal Loco"));
     break;
   }
+#endif
 }
 
 #endif
@@ -2966,6 +3058,20 @@ void sendDSPD(byte controllerIndex)
 #endif
 
 }
+
+// N beeps
+void nBeeps (byte numBeeps,
+       int durationMillis)
+{
+  for (int i = 0; i < numBeeps; i++)
+  {
+  analogWrite(MODULE_SOUNDER, 50);
+  delay(durationMillis);
+  digitalWrite(MODULE_SOUNDER, HIGH);
+  delay(durationMillis);
+  }
+}
+
 
 // set up fixed text on display
 void
