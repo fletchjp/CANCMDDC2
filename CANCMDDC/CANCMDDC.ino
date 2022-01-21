@@ -343,9 +343,10 @@ IoAbstractionRef arduinoPins = ioUsingArduino();
 
 #if KEYPAD || KEYPAD44
 
-#if KEYPAD 
-
+/// Reported by MyKeyboardListener
 byte key_pressed;
+
+#if KEYPAD 
 
 const byte ROWS = 4; /// four rows
 const byte COLS = 3; /// four columns
