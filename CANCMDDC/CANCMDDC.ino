@@ -1192,7 +1192,7 @@ void keypadEvent(char key,KeyState key_state = KeyState::IDLE)
     break;
 
   default:
-    break;
+    break;  // KeyState::IDLE
     
   }
 }
