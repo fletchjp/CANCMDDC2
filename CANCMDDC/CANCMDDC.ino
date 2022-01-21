@@ -247,20 +247,20 @@
  Digital pin 34       LED Green  - unused
  Digital pin 35       LED Yellow - unused - extra pin for 4 by 4 keypad (c0)
  Digital pin 36       Encoder 8 Switch
-                      The following are for the 4 by 3 Keypad
- Digital pin 37       c0    Keypad - uses odd-numbered pins only so that the 7-way header plugs straight in
+                      The following are for the 4 by 3 Keypad (CHANGED for new configuration)
+ Digital pin 37       c2    Keypad - uses odd-numbered pins only so that the 7-way header plugs straight in
  Digital pin 38             Encoder 1 Switch
  Digital pin 39       c1    Keypad
  Digital pin 40             Encoder 2 Switch
- Digital pin 41       c2    Keypad
+ Digital pin 41       c0    Keypad
  Digital pin 42             Encoder 3 Switch
- Digital pin 43       r0    Keypad
+ Digital pin 43       r3    Keypad
  Digital pin 44             Encoder 4 Switch
- Digital pin 45 (PWM)   r1    Keypad
+ Digital pin 45 (PWM)   r2    Keypad
  Digital pin 46             Encoder 5 Switch
- Digital pin 47       r2    Keypad
+ Digital pin 47       r1    Keypad
  Digital pin 48             Encoder 6 Switch
- Digital pin 49       r3    Keypad
+ Digital pin 49       r0    Keypad
  Digital pin 50 (MISO)    SO    CAN
  Digital pin 51 (MOSI)    SI    CAN
  Digital pin 52 (SCK)     Sck   CAN
