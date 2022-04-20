@@ -654,8 +654,10 @@ struct {
 #ifndef TOWNSEND
 // Townsend uses Martin's encoder.
 #define ENCODER_DO_NOT_USE_INTERRUPTS
-#endif
 #include "encoderController.h"
+#else
+#include "encoderControllerMD.h"
+#endif
 struct {
   encoderControllerClass encoderController;
 } encoders[NUM_CONTROLLERS] = {
