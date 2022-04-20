@@ -6,8 +6,10 @@
  * the Free Software Foundation; version 3 of the License
  */
 
-#ifndef ENCODERCONTROLLER_H
-#define ENCODERCONTROLLER_H 
+// Adapted to use Martin Da Costa's encoder library
+
+#ifndef ENCODERCONTROLLERMD_H
+#define ENCODERCONTROLLERMD_H 
 
 
 // Analogue (PWM) Train Controller.
@@ -17,15 +19,75 @@
 // Methods:
 //                       encoderControllerClass(int setPinA, int setPinB, int setPinS)            Class Constructor
 
-//#define ENCODER_USE_INTERRUPTS
-#define ENCODER_DO_NOT_USE_INTERRUPTS
-#include "encoder3.h"
+#include "EncoderMD.h"
+#include <TaskManagerIO.h>
 
+/// Swap the pins to get the opposite action
+/// This is equivalent to changing over the wires.
+#define SWAP_PINS 1
+
+
+
+volatile byte lastPins = 0;
+
+/// @brief The PCI setup is specific to the pins being used, here A8 to A11.
+/// PCI does not work on the MEGA pins A0 to A7.
+void setupPCI()
+{
+  cli();
+  PCICR  |= 0b00000100;  //Set Pin Change Interrupt on Register K
+  PCMSK2 |= 0b00001111;  //Set A8, A9, A10 & A11 for interrupt
+  sei();
+}
+
+/// @brief EncoderEvent - now uses class variable to support multiple encoders.
+///
+/// char encoderName variable is provided so that outputs can be distinguished.
+class EncoderEvent : public BaseEvent {
+private:
+/// Used to note when the encoder position has changed.
+    char encoderName;
+    EncoderMD &encoder;
+    static const uint32_t NEXT_CHECK_INTERVAL = 60UL * 1000000UL; // 60 seconds away, maximum is about 1 hour.
+public:
+    boolean TurnDetected;
+    int RotaryPosition;
+    int PrevPosition;
+    EncoderEvent(EncoderMD &encoder_, char name_= '0') : encoderName(name_), encoder(encoder_)  {
+      RotaryPosition = 0; PrevPosition = 0;
+    }
+    /// @brief timeOfNextCheck now replaced by call from ISR calling markTriggeredAndNotify().
+    uint32_t timeOfNextCheck() override {
+        return 250UL * 1000UL; // every 100 milliseconds we roll the dice
+    }
+    void exec() override {
+         //Serial.print("exec called with ");
+         RotaryPosition = encoder.getPosition();
+         //Serial.println(RotaryPosition);
+         TurnDetected = (RotaryPosition != PrevPosition);
+         if (TurnDetected)  {         
+           PrevPosition = RotaryPosition; // Save previous position in variable
+           Serial.print(encoderName);
+           Serial.print(" ");
+           Serial.println(RotaryPosition);
+           // here we turn the led on and off as the encoder moves.
+           ioDeviceDigitalWriteS(arduinoIo, ledOutputPin, RotaryPosition % 2);
+         }
+    }
+    /**
+     * We should always provide a destructor.
+     */
+    ~EncoderEvent() override = default;
+};
+
+// Wrapper class to provide the interface.
 class encoderControllerClass
 {
   private:
-      Encoder enc;
+      EncoderMD &enc;
+      EncoderEvent &enc_event;
       bool    ignorePush = false;
+      int spinwheelClickPin;
   // -------------------------------------------------
 
   public:
@@ -39,7 +101,13 @@ class encoderControllerClass
                           uint8_t setPinB,
                           uint8_t setPinS)
   {
-      enc = Encoder(setPinA, setPinB, setPinS);
+#if SWAP_PINS
+      enc = EncoderMD(setPinB, setPinA);
+#else
+      enc = EncoderMD(setPinA, setPinB);
+#endif
+      enc_event = EncoderEvent(enc);
+      spinwheelClickPin1 = setPinS;
   }
 
   bool read()
