@@ -1,6 +1,6 @@
 /// @file CANCMDDC.ino
 /// @brief CANCMDDC main file
-#define VERSION 4.13
+#define VERSION 4.14
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // This is now the main branch.
@@ -50,6 +50,10 @@
 // Correct number of encoders for TOWNSEND option
 // Version 4a Beta 13
 // Add code for 4x3 Keypad and also operational code
+// Version 4a Beta 14
+// Convert encoder to use Martin's library - two encoders.
+// This will use the code from matrixKeyboardMartinsLibraryMEGA34Event2
+// There could be a version to get the data from another Arduino over I2C. Not being done for now.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -851,7 +855,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 13;                 // code beta sub-version
+const byte VER_BETA = 14;                 // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin
