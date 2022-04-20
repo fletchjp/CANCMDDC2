@@ -17,3 +17,4 @@ I am going to change the encoder to use Martin Da Costa's library. This will inv
 
 For two encoders this should not be a problem.
 
+There is a problem at the moment to get the EncoderEvent set up as a class member.
