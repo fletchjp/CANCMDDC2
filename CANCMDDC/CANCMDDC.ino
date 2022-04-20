@@ -257,34 +257,35 @@
  Digital pin 39       c1    Keypad
  Digital pin 40             Encoder 2 Switch
  Digital pin 41       c0    Keypad
- Digital pin 42             Encoder 3 Switch
+ Digital pin 42             Encoder 3 Switch - NOT SUPPORTED
  Digital pin 43       r3    Keypad
- Digital pin 44             Encoder 4 Switch
+ Digital pin 44             Encoder 4 Switch - NOT SUPPORTED
  Digital pin 45 (PWM)   r2    Keypad
- Digital pin 46             Encoder 5 Switch
+ Digital pin 46             Encoder 5 Switch - NOT SUPPORTED
  Digital pin 47       r1    Keypad
- Digital pin 48             Encoder 6 Switch
+ Digital pin 48             Encoder 6 Switch - NOT SUPPORTED
  Digital pin 49       r0    Keypad
  Digital pin 50 (MISO)    SO    CAN
  Digital pin 51 (MOSI)    SI    CAN
  Digital pin 52 (SCK)     Sck   CAN
  Digital pin 53 (SS)      CS    CAN
- Digital / Analog pin 0     Encoder 1 A
- Digital / Analog pin 1     Encoder 2 A
- Digital / Analog pin 2     Encoder 3 A
- Digital / Analog pin 3     Encoder 4 A
- Digital / Analog pin 4     Encoder 5 A
- Digital / Analog pin 5     Encoder 6 A
+ A0 to A7 do not work with Martin's encoder as PCI interrupts are not available.
+ Digital / Analog pin 0     Encoder 1 A - NOT SUPPORTED
+ Digital / Analog pin 1     Encoder 2 A - NOT SUPPORTED
+ Digital / Analog pin 2     Encoder 3 A - NOT SUPPORTED
+ Digital / Analog pin 3     Encoder 4 A - NOT SUPPORTED
+ Digital / Analog pin 4     Encoder 5 A - NOT SUPPORTED
+ Digital / Analog pin 5     Encoder 6 A - NOT SUPPORTED
  Digital / Analog pin 6     
  Digital / Analog pin 7     Hall Effect Input
- Digital / Analog pin 8     Encoder 1 B
- Digital / Analog pin 9     Encoder 2 B
- Digital / Analog pin 10    Encoder 3 B
- Digital / Analog pin 11    Encoder 4 B
- Digital / Analog pin 12    Encoder 5 B
- Digital / Analog pin 13    Encoder 6 B
- Digital / Analog pin 14    Encoder 7 B - unused
- Digital / Analog pin 15    Encoder 8 B - unused
+ Digital / Analog pin 8     Encoder 1 A
+ Digital / Analog pin 9     Encoder 2 A
+ Digital / Analog pin 10    Encoder 1 B
+ Digital / Analog pin 11    Encoder 2 B
+ Digital / Analog pin 12    Encoder 5 B - NOT SUPPORTED
+ Digital / Analog pin 13    Encoder 6 B - NOT SUPPORTED
+ Digital / Analog pin 14    Encoder 7 B - NOT SUPPORTED
+ Digital / Analog pin 15    Encoder 8 B - NOT SUPPORTED
 */
 
 
