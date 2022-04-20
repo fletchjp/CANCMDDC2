@@ -20,13 +20,20 @@
 //                       encoderControllerClass(int setPinA, int setPinB, int setPinS)            Class Constructor
 
 #include "EncoderMD.h"
+#include <IoAbstraction.h>
 #include <TaskManagerIO.h>
+
+/// @brief Declaration of Arduino abstraction for Input/Output.
+/// This works for pins connected directly to an Arduino
+IoAbstractionRef arduinoIo = ioUsingArduino();
+
 
 /// Swap the pins to get the opposite action
 /// This is equivalent to changing over the wires.
 #define SWAP_PINS 1
 
-
+/// an LED that flashes as the encoder changes
+const int ledOutputPin = 13;
 
 volatile byte lastPins = 0;
 
@@ -81,6 +88,7 @@ public:
 };
 
 // Wrapper class to provide the interface.
+// It may be that I don't do it this way.
 class encoderControllerClass
 {
   private:
@@ -106,20 +114,21 @@ class encoderControllerClass
 #else
       enc = EncoderMD(setPinA, setPinB);
 #endif
-      enc_event = EncoderEvent(enc);
-      spinwheelClickPin1 = setPinS;
+// This action is not permitted - take reference of the event.
+//      enc_event = EncoderEvent(enc);
+      spinwheelClickPin = setPinS;
   }
 
   bool read()
   {
-      uint8_t val = enc.read();
+      uint8_t val = enc.getPosition();
 
-      if (val == 255) // button pressed
+      if (val == 255) // button pressed (This needs changing)
       {
           if (ignorePush) return false;
 
           if (push == 0) push = millis();
-          enc.write(0);
+          enc.setPosition(0);
           newPos = 0;
           lastPos = 0;
           return true;
@@ -134,12 +143,12 @@ class encoderControllerClass
       {
           if (lastPos == 0)
           {
-              enc.write(2);
+              enc.setPosition(2);
               val = 2;
           }
           else // == 2
           {
-              enc.write(0);
+              enc.setPosition(0);
               val = 0;
           }
       }
@@ -150,7 +159,7 @@ class encoderControllerClass
 
   void write(uint8_t value)
   {
-      enc.write(value);
+      enc.setPosition(value);
       newPos = value;
       lastPos = value;
       push = 0;
