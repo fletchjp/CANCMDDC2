@@ -651,12 +651,19 @@ struct {
 
 #if ENCODER
 //#define ENCODER_USE_INTERRUPTS
+#ifndef TOWNSEND
+// Townsend uses Martin's encoder.
 #define ENCODER_DO_NOT_USE_INTERRUPTS
+#endif
 #include "encoderController.h"
 struct {
   encoderControllerClass encoderController;
 } encoders[NUM_CONTROLLERS] = {
-#if LINKSPRITE || TOWNSEND // Only 2 controllers in this case.
+#if TOWNSEND // Only 2 controllers in this case. Pins for Martin's encoder.
+                {encoderControllerClass(A8,  A10, 38)},
+                {encoderControllerClass(A9,  A11, 40)}
+#else
+#if LINKSPRITE // Only 2 controllers in this case.
                 {encoderControllerClass(A8,  A0, 38)},
                 {encoderControllerClass(A9,  A1, 40)}
 #else
@@ -668,6 +675,7 @@ struct {
                 {encoderControllerClass(A13, A5, 48)},
                 //{Encoder(A14, A6, 9), 0, 0, 0},
                 //{Encoder(A15, A7, 36), 0, 0, 0}
+#endif
 #endif
 };
 #endif
