@@ -328,6 +328,7 @@
 #define DEBUG         1 // set to 0 for no debug messages, 1 for messages to console
 #define OLED_DISPLAY  0 // set to 0 if 128x32 OLED display is not present
 #define LCD_DISPLAY   1 // set to 0 if 4x20 char LCD display is not present
+#define ENCODER       1 // set to 0 if encoders are not supported
 #define KEYPAD        1 // set to 0 if 4x3 keypad is not present
 #define KEYPAD44      0 // set to 0 if 4x4 keypad is not present
 #define CANBUS        1 // set to 0 if CAN h/w is not present
@@ -650,13 +651,13 @@ struct {
                                   };
 
 #if ENCODER
-//#define ENCODER_USE_INTERRUPTS
-#ifndef TOWNSEND
+#if TOWNSEND
 // Townsend uses Martin's encoder.
+#include "encoderControllerMD.h"
+#else
+//#define ENCODER_USE_INTERRUPTS
 #define ENCODER_DO_NOT_USE_INTERRUPTS
 #include "encoderController.h"
-#else
-#include "encoderControllerMD.h"
 #endif
 struct {
   encoderControllerClass encoderController;
