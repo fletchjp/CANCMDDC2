@@ -18,6 +18,8 @@ Some of them are standard Arduino files and will get picked up automatically.
 
 The latest version now uses Martin Da Costa's encoder library encoderMD to include two encoders for the TOWNSEND option.
 
+Testing is being done on the new hardware.
+
 ## Introduction
 
 This repository holds a version of CANCMDDC which uses the Arduino CBUS library of Duncan Greenwood. This means that it can exchange CBUS events with other modules. These events need to be coded by the user.
