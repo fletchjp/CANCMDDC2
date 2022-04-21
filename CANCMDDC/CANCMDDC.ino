@@ -401,6 +401,7 @@ MyKeyboardListener myListener;
 
 #define L298N      1  // L298N output boards in use
 #define TOWNSEND   1  // Version for Paul Townsend
+// This will use two encoders using Martin Da Costa's library EncoderMD.
 // Set this to 0 for the other hardware options
 #define LINKSPRITE 0  // Defined to use Linksprite Motor Shield
 
