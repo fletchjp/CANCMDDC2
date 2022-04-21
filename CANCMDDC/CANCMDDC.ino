@@ -59,6 +59,9 @@
 // At the moment the code which uses the encoders is missing - I need to bring it in.
 // There is an assumption in the old code that the number of encoders is the same as the number of
 // controllers supported.
+// This has now been tested for operation of two encoders.
+// The output is not yet integrated into the control of trains.
+// The works with the TOWNSEND option only.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
