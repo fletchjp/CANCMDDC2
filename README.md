@@ -6,7 +6,7 @@
 
 I have edited the files to make sure that the various header files can only be called once and are available where they are needed.
 
-I have increased the version number to 4.10 (4a beta 10) and posted that on GitHub.
+I have increased the version number to 4.14 (4a beta 14) and posted that on GitHub.
 
 https://github.com/fletchjp/CANCMDDC2
 
@@ -15,6 +15,8 @@ Please note that the main code is accompanied by a set of other files which shou
 Various other libraries are needed and I need to add documentation for them.
 
 Some of them are standard Arduino files and will get picked up automatically.
+
+The latest version now uses Martin Da Costa's encoder library encoderMD to include two encoders for the TOWNSEND option.
 
 ## Introduction
 
