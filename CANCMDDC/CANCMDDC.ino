@@ -662,9 +662,9 @@ struct {
 struct {
   encoderControllerClass encoderController;
 } encoders[NUM_CONTROLLERS] = {
-#if TOWNSEND // Only 2 controllers in this case. Pins for Martin's encoder.
-                {encoderControllerClass(A8,  A10, 38)},
-                {encoderControllerClass(A9,  A11, 40)}
+#if TOWNSEND // Only 2 controllers in this case. Pins for Martin's encoder in the header file.
+                {encoderControllerClass(encoder1, spinwheelClickPin1,encoder_name1)},
+                {encoderControllerClass(encoder2, spinwheelClickPin2,encoder_name2)}
 #else
 #if LINKSPRITE // Only 2 controllers in this case.
                 {encoderControllerClass(A8,  A0, 38)},
@@ -1471,6 +1471,11 @@ void setupCBUS()
     // start repeating at 850 millis then repeat every 350ms
     keyPad.setRepeatKeyMillis(850, 350);
 
+#endif
+
+// Set up encoders using Martin's encoder library.
+#if (ENCODER && TOWNSEND)
+    setup_encoders();
 #endif
 
 //  //initialize all timers except for 0, to save time keeping functions
