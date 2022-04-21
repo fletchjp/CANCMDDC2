@@ -56,6 +56,7 @@
 // The example was made to sort out difficulties organising access to the encoders.
 // This works for two encoders and it is not easy to scale it for more than two.
 // There could be a version to get the data from another Arduino over I2C. Not being done for now.
+// At the moment the code which uses the encoders is missing - I need to bring it in.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
