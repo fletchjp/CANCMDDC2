@@ -52,7 +52,9 @@
 // Add code for 4x3 Keypad and also operational code
 // Version 4a Beta 14
 // Convert encoder to use Martin's library - two encoders.
-// This will use the code from matrixKeyboardMartinsLibraryMEGA34Event2
+// This uses the code from matrixKeyboardMartinsLibraryMEGA34EventArray
+// The example was made to sort out difficulties organising access to the encoders.
+// This works for two encoders and it is not easy to scale it for more than two.
 // There could be a version to get the data from another Arduino over I2C. Not being done for now.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
