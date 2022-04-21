@@ -57,6 +57,8 @@
 // This works for two encoders and it is not easy to scale it for more than two.
 // There could be a version to get the data from another Arduino over I2C. Not being done for now.
 // At the moment the code which uses the encoders is missing - I need to bring it in.
+// There is an assumption in the old code that the number of encoders is the same as the number of
+// controllers supported.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -332,7 +334,7 @@
 #define OLED_DISPLAY  0 // set to 0 if 128x32 OLED display is not present
 #define LCD_DISPLAY   1 // set to 0 if 4x20 char LCD display is not present
 #define ENCODER       1 // set to 0 if encoders are not supported
-#define KEYPAD        1 // set to 0 if 4x3 keypad is not present
+#define KEYPAD        0 // set to 0 if 4x3 keypad is not present
 #define KEYPAD44      0 // set to 0 if 4x4 keypad is not present
 #define CANBUS        1 // set to 0 if CAN h/w is not present
 #define HALL_EFFECT   1  // set to 0 if Hall Effect current detection is not present.
@@ -1429,7 +1431,7 @@ void setupCBUS()
 //#if DEBUG
 // Some use of the Serial port turned off if DEBUG = 0
   Serial.begin (115200);
-  Serial << endl << endl << F("> ** CBUS CMDDCC2 module v2.2h ** ") << __FILE__ << endl;
+  Serial << endl << endl << F("> ** CBUS CMDDCC module v4.14 ** ") << __FILE__ << endl;
 //#endif
 
   setupCBUS();
