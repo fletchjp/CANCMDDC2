@@ -174,7 +174,7 @@
  *  Also uses a 100Hz timer interrupt to control LED, buzzer and accelleration and deccelleration.
  *  This sketch creates one instance of the FIFO buffer class, and 5 instances for the train controller class.
  */
-// NOTE: Interrupt handling may be different - notes to be ammended later.
+// NOTE: Interrupt handling is now different - notes to be ammended later.
 /*
   Copyright (C) Duncan Greenwood 2017 (duncan_greenwood@hotmail.com)
 
