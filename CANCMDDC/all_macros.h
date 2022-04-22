@@ -18,6 +18,7 @@
 
 #define LAYOUT(layout,chars)       const char layout[] PROGMEM = chars;
 
+#define BYTE_ARRAY_3(name,size,a,b,c,d) byte name[size] = {a,b,c};
 #define BYTE_ARRAY_4(name,size,a,b,c,d) byte name[size] = {a,b,c,d};
 
 #endif
