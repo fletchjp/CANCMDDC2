@@ -5,7 +5,7 @@
 
 #include "all_macros.h"
 
-// This defines the keyboard layout
+// This defines the keyboard layout for a 4 by 4 keypad.
 
 ALIAS_C_BYTE(ROWS,4)
 ALIAS_C_BYTE(COLS,4)
