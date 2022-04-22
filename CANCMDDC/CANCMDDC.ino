@@ -63,6 +63,7 @@
 // The output is not yet integrated into the control of trains.
 // The works with the TOWNSEND option only.
 // The 3 by 4 keypad has been installed and works passing commands as needed.
+// This is getting close to being usable code.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
