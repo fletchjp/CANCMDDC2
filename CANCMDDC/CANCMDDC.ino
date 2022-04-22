@@ -379,7 +379,7 @@ uint8_t cols = COLS;
 
 
 #else
-
+// 4 by 4 keypad.
 #include "definitions.h"
 
 #endif
