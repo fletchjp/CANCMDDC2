@@ -62,6 +62,7 @@
 // This has now been tested for operation of two encoders.
 // The output is not yet integrated into the control of trains.
 // The works with the TOWNSEND option only.
+// The 3 by 4 keypad has been installed and works passing commands as needed.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -337,7 +338,7 @@
 #define OLED_DISPLAY  0 // set to 0 if 128x32 OLED display is not present
 #define LCD_DISPLAY   1 // set to 0 if 4x20 char LCD display is not present
 #define ENCODER       1 // set to 0 if encoders are not supported
-#define KEYPAD        0 // set to 0 if 4x3 keypad is not present
+#define KEYPAD        1 // set to 0 if 4x3 keypad is not present
 #define KEYPAD44      0 // set to 0 if 4x4 keypad is not present
 #define CANBUS        1 // set to 0 if CAN h/w is not present
 #define HALL_EFFECT   1  // set to 0 if Hall Effect current detection is not present.
