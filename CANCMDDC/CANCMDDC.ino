@@ -278,23 +278,25 @@
  Digital pin 51 (MOSI)    SI    CAN
  Digital pin 52 (SCK)     Sck   CAN
  Digital pin 53 (SS)      CS    CAN
- A0 to A7 do not work with Martin's encoder as PCI interrupts are not available.
- Digital / Analog pin 0     Encoder 1 A - NOT SUPPORTED
- Digital / Analog pin 1     Encoder 2 A - NOT SUPPORTED
- Digital / Analog pin 2     Encoder 3 A - NOT SUPPORTED
- Digital / Analog pin 3     Encoder 4 A - NOT SUPPORTED
- Digital / Analog pin 4     Encoder 5 A - NOT SUPPORTED
- Digital / Analog pin 5     Encoder 6 A - NOT SUPPORTED
+ A0 to A7 do not work with Martin's encoder as PCI interrupts are not available for these pins.
+ The encoder pins have been reorganised into A8 upwards.
+ Digital / Analog pin 0     
+ Digital / Analog pin 1     
+ Digital / Analog pin 2     
+ Digital / Analog pin 3     
+ Digital / Analog pin 4     
+ Digital / Analog pin 5     
  Digital / Analog pin 6     
  Digital / Analog pin 7     Hall Effect Input
  Digital / Analog pin 8     Encoder 1 A
- Digital / Analog pin 9     Encoder 2 A
- Digital / Analog pin 10    Encoder 1 B
+ Digital / Analog pin 9     Encoder 1 B
+ Digital / Analog pin 10    Encoder 2 A
  Digital / Analog pin 11    Encoder 2 B
- Digital / Analog pin 12    Encoder 5 B - NOT SUPPORTED
- Digital / Analog pin 13    Encoder 6 B - NOT SUPPORTED
- Digital / Analog pin 14    Encoder 7 B - NOT SUPPORTED
- Digital / Analog pin 15    Encoder 8 B - NOT SUPPORTED
+ These pins could support two more encoders - not in the code at present
+ Digital / Analog pin 12    Encoder 3 A - NOT SUPPORTED
+ Digital / Analog pin 13    Encoder 3 B - NOT SUPPORTED
+ Digital / Analog pin 14    Encoder 4 A - NOT SUPPORTED
+ Digital / Analog pin 15    Encoder 4 B - NOT SUPPORTED
 */
 
 
