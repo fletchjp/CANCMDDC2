@@ -42,7 +42,7 @@ I am planning to add CMRI code to interact with a JMRI panel implementing a sign
 
 I still plan to have this code as a unit controlling track sections using the 2 H bridge controllers installed in the second prototype.
 
-The stage beyond this will be a unit without the B bridges which instead uses CBUS to communicate with separate CBUS track control units which are being developed by Martin Da Costa. 
+The stage beyond this will be a unit without the H bridges which instead uses CBUS to communicate with separate CBUS track control units which are being developed by Martin Da Costa. 
 
 The advantage of the change is that the control of track sections can be done by rules in e.g. CANCOMPUTE instead of using relays. I could still use relays to switch to using ATC.
 
