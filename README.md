@@ -2,7 +2,15 @@
 
 # CANCMDDC2
 
-## Latest news
+## Latest News
+
+I have been in contact with Paul Townsend again and have a better understanding of his requirements.
+
+I am going to start a new version designed to meet his needs.
+
+
+
+## Previous news
 
 I have edited the files to make sure that the various header files can only be called once and are available where they are needed.
 
@@ -16,7 +24,7 @@ Various other libraries are needed and I need to add documentation for them.
 
 Some of them are standard Arduino files and will get picked up automatically.
 
-The latest version now uses Martin Da Costa's encoder library encoderMD to include two encoders for the TOWNSEND option.
+The latest version now uses Martin Da Costa's encoder library encoderMD to include two encoders for the TOWNSEND option. 
 
 Testing is being done on the new hardware.
 
