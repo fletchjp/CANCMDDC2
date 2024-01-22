@@ -333,7 +333,7 @@
 #include "trainController.h"
 
 // Set this to 1 for CANBUS modules with 8 Mhz Crystal
-// Set this to 0 for Sparkfun CANBUS shields.
+// Set this to 0 for Sparkfun CANBUS shields or Arduino Kit 110 shield
 #define CANBUS8MHZ 1
 
 // CANCMDDC 1.10 added extra display/keypad options plus CANBUS
