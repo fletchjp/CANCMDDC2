@@ -1,6 +1,6 @@
 /// @file CANCMDDC.ino
 /// @brief CANCMDDC main file
-#define VERSION 4.14
+#define VERSION 4.15
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC develop branch to work with the DC Controler.
 // This is now the main branch.
@@ -64,6 +64,10 @@
 // The works with the TOWNSEND option only.
 // The 3 by 4 keypad has been installed and works passing commands as needed.
 // This is getting close to being usable code.
+//////////////////////////////////////////////////////////////////////////////
+// Version 4a Beta 15
+// New start in October 2015 for the Bournville N Gauge layout.
+// The first change is to update EncoderMD code for possible interrupt problem.
 //////////////////////////////////////////////////////////////////////////////
 // CANCMDDC_V2a Beta 9
 // Ideas for using IO Abstraction library for task scheduling.
@@ -880,7 +884,7 @@ volatile boolean       showingSpeeds     = false;
 // constants
 const byte VER_MAJ = 4;                  // code major version
 const char VER_MIN = 'a';                // code minor version
-const byte VER_BETA = 14;                 // code beta sub-version
+const byte VER_BETA = 15;                // code beta sub-version
 const byte MODULE_ID = 99;               // CBUS module type
 
 const byte LED_GRN = 4;                  // CBUS green SLiM LED pin

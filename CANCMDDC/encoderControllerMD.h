@@ -94,7 +94,10 @@ public:
     }
     void exec() override {
          //Serial.print("exec called with ");
+         // Add interrupt guard when getting position.
+         noInterrupts();
          RotaryPosition = encoder.getPosition();
+         interrupts();
          //Serial.println(RotaryPosition);
          TurnDetected = (RotaryPosition != PrevPosition);
          if (TurnDetected)  {         
