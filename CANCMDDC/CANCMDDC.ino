@@ -344,8 +344,8 @@
 #define DEBUG         1 // set to 0 for no debug messages, 1 for messages to console
 #define OLED_DISPLAY  0 // set to 0 if 128x32 OLED display is not present
 #define LCD_DISPLAY   1 // set to 0 if 4x20 char LCD display is not present
-#define ENCODER       1 // set to 0 if encoders are not supported
-#define KEYPAD        1 // set to 0 if 4x3 keypad is not present
+#define ENCODER       0 // set to 0 if encoders are not supported
+#define KEYPAD        0 // set to 0 if 4x3 keypad is not present
 #define KEYPAD44      0 // set to 0 if 4x4 keypad is not present
 #define CANBUS        1 // set to 0 if CAN h/w is not present
 #define HALL_EFFECT   1  // set to 0 if Hall Effect current detection is not present.
@@ -408,10 +408,10 @@ MyKeyboardListener myListener;
 #endif
 
 #define L298N      1  // L298N output boards in use
-#define TOWNSEND   1  // Version for Paul Townsend
+#define TOWNSEND   0  // Version for Paul Townsend
 // This will use two encoders using Martin Da Costa's library EncoderMD.
 // Set this to 0 for the other hardware options
-#define LINKSPRITE 0  // Defined to use Linksprite Motor Shield
+#define LINKSPRITE 1  // Defined to use Linksprite Motor Shield
 
 //#include <Arduino.h> // This was in defs.h. I am not sure if it is needed.
 // local header which is going to have to be adapted for pin numbers.
